@@ -1,0 +1,1496 @@
+/*--width 1700 --*/
+/*--width 1700 --*/
+@media (max-width: 1500px) {
+  .ibadat-five-pillars-main-wrapper .pillars-main-wrapper .border-img-wrapper .pillard-block-wrapper {
+    width: 90%;
+  }
+  .ibadat-five-pillars-main-wrapper .pillars-main-wrapper {
+    gap: 20px;
+  }
+  .ibadat-main-banner-wrapper .ibadat-main-slider-wrapper .home-slider .slider-wrapper .slide-text .left-title h2 {
+    font-size: 60px;
+  }
+}
+
+/*--width 1400 --*/
+@media (max-width: 1400px) {
+  .main-header-wrapper1 .sb-main-header1 .menu-item-wrapper3 .index1-logo {
+    width: 165px;
+  }
+  .main-header-index-02 .sb-main-header1 .menu-item-wrapper3 .index1-logo {
+    width: 100%;
+  }
+  .ibadat-five-pillars-main-wrapper .pillars-main-wrapper .border-img-wrapper .pillard-block-wrapper .pillars-icon {
+    left: 24%;
+  }
+  .ibadat-five-pillars-main-wrapper .pillars-main-wrapper .border-img-wrapper .pillard-block-wrapper h4 {
+    font-size: 30px;
+  }
+  .ibadat-home-sec-banner-wrapper .side-social {
+    bottom: 5%;
+    width: 60px;
+    padding: 9px 0px;
+  }
+  .ibadat-home-sec-banner-wrapper .side-social ul li a {
+    width: 40px;
+    height: 40px;
+    line-height: 33px;
+  }
+}
+
+/*--width 1366 --*/
+@media (max-width: 1366px) {
+  .main-header-wrapper1 .sb-main-header1 .menu-item-wrapper3 .index1-logo {
+    width: 150px;
+  }
+  .main-header-index-02 .sb-main-header1 .menu-item-wrapper3 .index1-logo {
+    width: 100%;
+  }
+  .main-header-wrapper1 .sb-main-header1 .menu-item-wrapper3 .my-menu-header nav ul li a {
+    font-size: 14px;
+    font-weight: 600;
+  }
+  .food-main-banner-wrapper:after {
+    width: 60%;
+  }
+  .main-header-wrapper1 .sb-main-header1 .menu-item-wrapper3 .social-media-icons li + li {
+    margin-left: 11px;
+  }
+  .main-header-wrapper1 .sb-main-header1 .menu-item-wrapper3 .social-media-icons li .post-btn {
+    width: 130px;
+  }
+  .ibadat-five-pillars-main-wrapper .pillars-main-wrapper {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .ibadat-five-pillars-main-wrapper .pillars-main-wrapper .border-img-wrapper {
+    width: 20%;
+    margin-top: 66px;
+  }
+  .ibadat-event-text-main-wrapper .event-inner-main-wraper .event-blog-sidebar .event-blog-wrapper .date-tag {
+    top: 42%;
+  }
+  .cat label {
+    width: 40%;
+  }
+  .event-grid-wrapper .event-inner-main-wraper .event-blog-wrapper .date-tag {
+    top: 43%;
+  }
+  .ibadat-home-sec-team-wrapper .home-sec-team-inner-wrapper .team-main-box .team-content h4 a {
+    font-size: 22px;
+  }
+  .ibadat-home-sec-team-wrapper .home-sec-team-inner-wrapper .team-main-box .team-content h5 {
+    font-size: 16px;
+  }
+  .ibadat-home-sec-charity-wrapper .home-sec-charity-wrapper .charity-sldier-wrapper .owl-nav .owl-prev {
+    left: 0;
+  }
+  .ibadat-home-sec-charity-wrapper .home-sec-charity-wrapper .charity-sldier-wrapper .owl-nav .owl-next {
+    right: 0;
+  }
+  .ibadat-home-sec-charity-wrapper .home-sec-charity-wrapper .charity-sldier-wrapper {
+    width: 48%;
+  }
+  .home-sec-title h2 {
+    font-size: 34px;
+    line-height: 36px;
+  }
+  .ibadat-home-sec-about-wrapper .home-about-inner-wrapper .home-about-content h2 {
+    font-size: 34px;
+    line-height: 36px;
+  }
+}
+
+@media (max-width: 1250px) {
+  .ibadat-charity-main-wrapper .charity-main-wrapper .charity-text h2 {
+    font-size: 30px;
+  }
+  .event-grid-wrapper .event-inner-main-wraper .event-blog-wrapper .date-tag {
+    top: 40%;
+  }
+}
+
+/*--width 1199 --*/
+@media (max-width: 1199px) {
+  .ibadat-five-pillars-main-wrapper .pillars-main-wrapper .border-img-wrapper {
+    width: 25%;
+  }
+  .ibadat-five-pillars-main-wrapper .pillars-main-wrapper .border-img-wrapper .pillard-block-wrapper .pillars-icon {
+    left: 27%;
+  }
+  .ibadat-praying-main-wrapper {
+    margin-top: 32%;
+  }
+  .ibadat-praying-main-wrapper .praying-main-wrapper {
+    flex-direction: column;
+  }
+  .ibadat-praying-main-wrapper .praying-main-wrapper .left-title {
+    width: 50%;
+  }
+  .ibadat-praying-main-wrapper .praying-main-wrapper .prayers-types-wrapper {
+    width: 100%;
+    justify-content: space-between;
+    margin-top: 50px;
+  }
+  .ibadat-about-main-wrapper .ibadat-about-main-content-wrapper .about-img-wrapper .circle-img .img-bless {
+    width: 460px;
+    height: 460px;
+  }
+  .ibadat-home-sec-banner-wrapper .side-social {
+    display: none;
+  }
+  .ibadat-home-sec-about-wrapper .home-about-inner-wrapper .home-about-content .about-tag-wrapper .tag-text {
+    padding-left: 34%;
+  }
+}
+
+/*---- width 1230 ----*/
+@media (max-width: 1230px) {
+  .ibadat-gallery-main-wrapper .tab-content .tab-pane .gallery-main-block .portfolio_img_wrapper {
+    width: 31%;
+  }
+  .ibadat-sermons-wrapper .sermons-blog-wrapper .sermons-blog .sermons-text ul {
+    gap: 10px;
+  }
+  .ibadat-event-text-main-wrapper .event-inner-main-wraper .single-blog-wrapper.blog-4-coloumn .multi-blog-wrapper .event-blog-wrapper {
+    width: 48%;
+  }
+}
+
+/*--width 1199 --*/
+@media (max-width: 1199px) {
+  .main-header-wrapper1 .sb-main-header1 .menu-item-wrapper3 .social-media-icons .dekstop-login-btn {
+    display: none;
+  }
+  .main-header-wrapper1 .sb-main-header1 .menu-item-wrapper3 .social-media-icons .login-btn {
+    display: block;
+  }
+  .ibadat-audio-main-wrapper .ibadat-audio-wrapper .book-text {
+    width: 60%;
+  }
+  .ibadat-audio-main-wrapper .ibadat-audio-wrapper .book-img img {
+    width: 300px;
+  }
+  .ibadat-islamic-praying-main-wrapper .namaj-wrapper img {
+    width: 100%;
+  }
+  .ibadat-subcribe-main-wrapper .subcribe-wrapper .subcribe-search {
+    width: 50%;
+  }
+  .ibadat-event-text-main-wrapper .event-inner-main-wraper .event-blog-sidebar .event-blog-wrapper .date-tag {
+    top: 35%;
+  }
+  .ibadat-sermons-wrapper .sermons-blog-wrapper .sermons-blog .sermons-text ul li {
+    font-size: 12px;
+  }
+  .ibadat-cause-grid-main-wrapper .tab-content .tab-pane .event-inner-main-wraper .event-blog-wrapper {
+    width: 48%;
+  }
+  .event-grid-wrapper .event-inner-main-wraper .event-blog-wrapper .date-tag {
+    top: 38%;
+  }
+  .ibadat_modalpop .modal-dialog {
+    max-width: 900px;
+    height: 500px;
+  }
+  .ibadat_modalpop .modal-dialog .ibadat-content .modal-body .modal-innercontent {
+    padding: 60px;
+  }
+  .ibadat_modalpop .modal-dialog .ibadat-content .modal-body .modal-innercontent .donate-wrapper .donate-box2 h3 a {
+    font-size: 40px;
+  }
+  .ibadat-home-sec-banner-wrapper .home-sec-slider .home-sec-inner-slider .slider-content h2 {
+    font-size: 45px;
+  }
+  .ibadat-home-sec-banner-wrapper {
+    padding: 24px 0px;
+  }
+  .ibadat-home-sec-banner-wrapper:after {
+    width: 120px;
+    height: 290px;
+  }
+  .ibadat-home-sec-about-wrapper:after {
+    width: 120px;
+    height: 290px;
+  }
+}
+
+/*--width 1100 --*/
+@media (max-width: 1100px) {
+  .main-header-wrapper1 .sb-main-header1 .menu-item-wrapper3 .index1-logo {
+    padding-top: 30px;
+  }
+  .main-header-wrapper1 .sb-main-header1 .menu-item-wrapper3 .index1-logo a img {
+    width: 100%;
+  }
+  .main-header-wrapper1 .sb-main-header1 .menu-item-wrapper3 nav {
+    justify-content: left;
+  }
+  .main-header-index-02 .sb-main-header1 .menu-item-wrapper3 .index1-logo a img {
+    width: auto;
+  }
+  .ibadat-about-main-wrapper .ibadat-about-main-content-wrapper .about-text-wrappper .about-mission-wrapper {
+    flex-direction: column;
+  }
+  .main-header-wrapper1 .sb-main-header1 .menu-item-wrapper3 .my-menu-header .social-media-icons li .redButton {
+    font-size: 14px;
+  }
+  .main-header-wrapper1 .sb-main-header1 .menu-item-wrapper3 .my-menu-header nav ul li + li {
+    margin-left: 14px;
+  }
+  .main-header-wrapper1 .sb-main-header1 .menu-item-wrapper3 .my-menu-header .social-media-icons li .redButton {
+    padding: 12px 14px;
+  }
+  .event-grid-wrapper .event-inner-main-wraper .event-blog-wrapper .date-tag {
+    top: 50%;
+  }
+  .ibadat-event-text-main-wrapper .event-inner-main-wraper .event-blog-wrapper {
+    width: 48%;
+  }
+  .ibadat-home-sec-banner-wrapper {
+    padding: 114px 0px;
+  }
+  .ibadat-home-sec-banner-wrapper .home-sec-slider .home-sec-inner-slider .slider-content {
+    margin-left: 30%;
+    max-width: 100%;
+  }
+  .ibadat-home-sec-banner-wrapper .home-sec-slider .home-sec-inner-slider .slider-img {
+    width: 48%;
+  }
+}
+
+/*--width 1050 --*/
+@media (max-width: 1050px) {
+  .main-header-wrapper1 .sb-main-header1 .menu-item-wrapper3 nav ul li a span {
+    display: contents;
+    margin-left: 0;
+  }
+  .main-header-wrapper1 .sb-main-header1 .menu-item-wrapper3 nav ul li {
+    padding: 0;
+  }
+  .main-header-wrapper1 .sb-main-header1 .menu-item-wrapper3 nav ul li a {
+    padding: 36px 5px;
+  }
+  .ibadat-about-main-wrapper .ibadat-about-main-content-wrapper .about-img-wrapper .circle-img .img-bless {
+    width: 430px;
+    height: 430px;
+  }
+  .ibadat-event-text-main-wrapper .event-inner-main-wraper .event-single-blog-wrapper {
+    width: 100%;
+  }
+  .ibadat-event-text-main-wrapper .event-inner-main-wraper .event-blog-sidebar {
+    width: 50%;
+    padding-left: 0;
+  }
+  .ibadat-event-text-main-wrapper .event-inner-main-wraper .event-blog-sidebar .event-blog-wrapper .date-tag {
+    top: 56%;
+  }
+  .ibadat-cause-grid-main-wrapper .cause-grid-top-wrappper .search-box {
+    width: 35%;
+  }
+  .ibadat-blog-single-form-wrapper .blog-form-list-wrapper .ibadat-donation-wrapper .amount-tag-wrapper .cat {
+    gap: 0px;
+  }
+  .ibadat-five-pillars-main-wrapper .pillars-main-wrapper .border-img-wrapper .pillard-block-wrapper .pillars-icon {
+    left: 24%;
+  }
+}
+
+/*--width 1024 --*/
+@media (max-width: 1024px) {
+  .main-header-wrapper1 .sb-main-header1 .menu-item-wrapper3 nav ul li a {
+    padding: 36px 0px;
+  }
+  .main-header-wrapper1 .sb-main-header1 .menu-item-wrapper3 nav ul li + li {
+    margin-left: 9px;
+  }
+  .ibadat-home-sec-srvices-wrapper .ibadat-main-service-inner-wrapper .service-box .service-content h4 a {
+    font-size: 25px;
+    line-height: 20px;
+  }
+  .ibadat-audio-home-sec-wrapper .ibadat-audio-wrapper .book-img img {
+    width: 100%;
+  }
+}
+
+/*--width 995 --*/
+/*--width 993 --*/
+@media (max-width: 991px) {
+  .main-header-wrapper1 .sb-main-header1 .mobile-menu-wrapper .social-media-icons ul .user-text {
+    right: -22px;
+  }
+  .main-header-wrapper1 .top-header {
+    display: none;
+  }
+  .main-header-wrapper1 .sb-main-header1 .mobile-menu-wrapper .social-media-icons {
+    padding-top: 12px;
+  }
+  .ibadat-about-main-wrapper .ibadat-about-main-content-wrapper {
+    flex-direction: column;
+  }
+  .ibadat-about-main-wrapper .ibadat-about-main-content-wrapper .about-text-wrappper {
+    width: 100%;
+  }
+  .ibadat-about-main-wrapper .ibadat-about-main-content-wrapper .about-img-wrapper {
+    width: 100%;
+  }
+  .ibadat-about-main-wrapper .ibadat-about-main-content-wrapper .about-text-wrappper .about-mission-wrapper {
+    flex-direction: inherit;
+  }
+  .ibadat-about-main-wrapper .ibadat-about-main-content-wrapper .about-img-wrapper {
+    justify-content: center;
+  }
+  .ibadat-about-main-wrapper .ibadat-about-main-content-wrapper .about-img-wrapper .circle-img .img-bless {
+    width: 475px;
+    height: 475px;
+  }
+  .ibadat-audio-main-wrapper .ibadat-audio-wrapper {
+    flex-direction: column;
+  }
+  .ibadat-audio-main-wrapper .ibadat-audio-wrapper .book-img {
+    width: 100%;
+  }
+  .ibadat-audio-main-wrapper .ibadat-audio-wrapper .book-text {
+    width: 100%;
+  }
+  .ibadat-audio-main-wrapper .ibadat-audio-wrapper .book-img img {
+    position: inherit;
+  }
+  .ibadat-charity-main-wrapper .charity-main-wrapper {
+    flex-direction: column;
+  }
+  .ibadat-charity-main-wrapper .charity-main-wrapper .charity-text {
+    width: 100%;
+  }
+  .ibadat-charity-main-wrapper .charity-main-wrapper .charity-img {
+    width: 100%;
+  }
+  .ibadat-upcoming-events-main-wrapper .upcoming-main-wrapper {
+    flex-direction: column;
+  }
+  .ibadat-upcoming-events-main-wrapper .upcoming-main-wrapper .upcoming-img {
+    width: 100%;
+  }
+  .ibadat-upcoming-events-main-wrapper .upcoming-main-wrapper .upcoming-text {
+    width: 100%;
+  }
+  .ibadat-stay-connected-main-wrapper .stay-connected-wrapper {
+    flex-direction: column;
+  }
+  .ibadat-stay-connected-main-wrapper .stay-connected-wrapper .left-title {
+    width: 50%;
+    margin-bottom: 35px;
+  }
+  .ibadat-stay-connected-main-wrapper .stay-connected-wrapper .stay-img-wrapper {
+    width: 100%;
+    justify-content: center;
+  }
+  .ibadat-blog-main-wrapper .blog-main-wrapper {
+    flex-direction: column;
+  }
+  .ibadat-blog-main-wrapper .blog-main-wrapper .left-title {
+    width: 60%;
+    margin-bottom: 30px;
+  }
+  .ibadat-blog-main-wrapper .blog-main-wrapper .blog-slider {
+    width: 100%;
+  }
+  .ibadat-blog-main-wrapper:after {
+    width: 100%;
+    height: 50%;
+    top: 50%;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+  }
+  .ibadat-main-banner-wrapper .ibadat-main-slider-wrapper .home-slider .slider-wrapper {
+    flex-direction: column-reverse;
+  }
+  .ibadat-main-banner-wrapper {
+    margin-top: 0;
+    height: 100%;
+  }
+  .ibadat-main-banner-wrapper:before {
+    height: 100%;
+  }
+  .ibadat-main-banner-wrapper:after {
+    height: 100%;
+  }
+  .ibadat-main-banner-wrapper .ibadat-main-slider-wrapper .home-slider .slider-wrapper .slide-text .left-title h2 {
+    font-size: 50px;
+    line-height: 50px;
+  }
+  .ibadat-main-banner-wrapper .ibadat-main-slider-wrapper .home-slider .slider-wrapper .slide-text .left-title .redButton {
+    margin-bottom: 50px;
+  }
+  .ibadat-main-banner-wrapper .ibadat-main-slider-wrapper .home-slider .owl-nav {
+    bottom: 40px;
+  }
+  .ibadat-subcribe-main-wrapper .subcribe-wrapper .subcribe-search {
+    width: 100%;
+    margin-top: 18px;
+  }
+  .ibadat-subcribe-main-wrapper .subcribe-wrapper {
+    flex-direction: column;
+  }
+  .ibadat-praying-main-wrapper .praying-main-wrapper .prayers-types-wrapper {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .ibadat-praying-main-wrapper .praying-main-wrapper .prayers-types-wrapper .prayer-name {
+    margin-bottom: 30px;
+    width: 25%;
+    text-align: center;
+  }
+  .ibadat-praying-main-wrapper .praying-main-wrapper .prayers-types-wrapper .prayer-name .prayer-text {
+    text-align: center;
+    left: 0;
+    width: 100%;
+  }
+  .ibadat-gallery-main-wrapper .gallery-tabs-wrapper {
+    flex-direction: column;
+  }
+  .ibadat-gallery-main-wrapper .gallery-tabs-wrapper .nav-tabs {
+    margin-top: 30px;
+  }
+  .ibadat-inner-banner-main-wrapper {
+    margin-top: 0;
+  }
+  .ibadat-about-text-main-wrapper .about-inner-wrapper {
+    flex-direction: column;
+  }
+  .ibadat-about-text-main-wrapper .about-inner-wrapper .about-text-wrappper {
+    width: 100%;
+    padding: 0;
+  }
+  .ibadat-event-text-main-wrapper .event-inner-main-wraper .event-blog-sidebar {
+    width: 60%;
+  }
+  .ibadat-gallery-main-wrapper .tab-content .tab-pane .gallery-main-block.gallery-4-wrapper .portfolio_img_wrapper {
+    width: 48%;
+  }
+  .ibadat-main-banner-wrapper .ibadat-main-slider-wrapper .home-slider .slider-wrapper .slide-text {
+    width: 100%;
+  }
+  .ibadat-sermons-wrapper .sermons-blog-wrapper {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .ibadat-sermons-wrapper .sermons-blog-wrapper .sermons-blog {
+    width: 48%;
+  }
+  .ibadat-seremons-list-main-wrapper .sermons-list-tabs-wrappper {
+    flex-direction: column;
+  }
+  .ibadat-seremons-list-main-wrapper .sermons-list-tabs-wrappper .sermons-tabs {
+    width: 100%;
+  }
+  .ibadat-seremons-list-main-wrapper .sermons-list-tabs-wrappper .sermons-tabs .nav-tabs {
+    flex-direction: inherit;
+  }
+  .ibadat-seremons-list-main-wrapper .sermons-list-tabs-wrappper .sermons-text {
+    width: 100%;
+  }
+  .ibadat-about-text-main-wrapper .about-inner-wrapper .abt-img {
+    width: 100%;
+  }
+  .ibadat-event-text-main-wrapper .event-inner-main-wraper .blog-single-main-wrapper {
+    width: 100%;
+  }
+  .ibadat-event-text-main-wrapper .event-inner-main-wraper {
+    flex-direction: column;
+  }
+  .ibadat-event-text-main-wrapper .event-inner-main-wraper .single-blog-wrapper {
+    width: 100%;
+  }
+  .ibadat-cause-grid-main-wrapper .tab-content .tab-pane .blog-list-main-wappper {
+    flex-direction: column;
+  }
+  .ibadat-cause-grid-main-wrapper .tab-content .tab-pane .blog-list-main-wappper .blog-list-content {
+    padding-right: 0;
+  }
+  .ibadat-cause-grid-main-wrapper .tab-content .tab-pane .blog-list-main-wappper .blog-list-img {
+    width: 100%;
+  }
+  .ibadat-cause-grid-main-wrapper .tab-content .tab-pane .blog-list-main-wappper .blog-list-img img {
+    width: 100%;
+  }
+  .ibadat-blog-single-form-wrapper .blog-form-list-wrapper .img-content-wrapper {
+    flex-direction: column;
+  }
+  .ibadat-blog-single-form-wrapper .blog-form-list-wrapper .img-content-wrapper .blog-content {
+    width: 100%;
+    padding: 0;
+    margin-top: 20px;
+  }
+  .ibadat-blog-single-form-wrapper .blog-form-list-wrapper .img-content-wrapper .blog-img {
+    width: 100%;
+  }
+  .ibadat-contact-main-wrapper .contact-top-block .block h4 {
+    font-size: 20px;
+  }
+  .ibadat-contact-main-wrapper .contact-top-block .block p {
+    font-size: 12px;
+  }
+  .ibadat-contact-main-wrapper .contact-form-wrapper {
+    flex-direction: column;
+  }
+  .ibadat-contact-main-wrapper .contact-form-wrapper .contact-form {
+    width: 100%;
+  }
+  .ibadat-contact-main-wrapper .contact-form-wrapper .contact-location {
+    width: 100%;
+    height: 100%;
+  }
+  .ibadat-contact-main-wrapper .contact-top-block {
+    flex-direction: column;
+  }
+  .ibadat-contact-main-wrapper .contact-top-block .block {
+    width: 100%;
+  }
+  .event-grid-wrapper .event-inner-main-wraper {
+    flex-direction: inherit;
+  }
+  .event-grid-wrapper .event-inner-main-wraper .event-blog-wrapper .date-tag {
+    top: 42%;
+  }
+  .ibadat-five-pillars-main-wrapper .pillars-main-wrapper .border-img-wrapper .pillard-block-wrapper .pillars-icon {
+    left: 20%;
+  }
+  .ibadat-praying-main-wrapper .praying-main-wrapper .left-title {
+    width: 100%;
+  }
+  .ibadat-blog-main-wrapper .blog-main-wrapper .left-title {
+    width: 100%;
+  }
+  .ibadat-gallery-main-wrapper .filters-content .item .portfolio_img_wrapper {
+    width: 48%;
+  }
+  .ibadat-gallery-main-wrapper .filters-content .item {
+    flex-wrap: wrap;
+  }
+  .ibadat-event-text-main-wrapper .event-inner-main-wraper .single-blog-wrapper.blog-3-coloumn .multi-blog-wrapper {
+    justify-content: center;
+  }
+  .ibadat-event-text-main-wrapper .event-inner-main-wraper .single-blog-wrapper.blog-3-coloumn .multi-blog-wrapper .event-blog-wrapper {
+    width: 48%;
+  }
+  /*---- index-three ----*/
+  .tp-caption.WebProduct-Title, .WebProduct-Title {
+    font-size: 30px !important;
+    line-height: 36px !important;
+  }
+  .tp-parallax-wrap {
+    padding-left: 30px !important;
+  }
+  .readmore_content, .section_8 .infobox_wrapper {
+    margin-bottom: 30px;
+  }
+  .section-5 .main {
+    margin-bottom: 70px;
+  }
+  .icon-section {
+    margin-bottom: 30px;
+  }
+  .section-1 .icon-text {
+    margin-bottom: 30px;
+  }
+  .ibadat_modalpop .modal-dialog {
+    max-width: 730px;
+    height: 440px;
+  }
+  .ibadat_modalpop .modal-dialog .ibadat-content .modal-body .modal-innercontent {
+    padding: 35px;
+  }
+  .ibadat_modalpop .modal-dialog .ibadat-content .modal-body .modal-innercontent .donate-wrapper .donate-box2 h3 a {
+    font-size: 35px;
+  }
+  .ibadat_modalpop .modal-dialog .ibadat-content .modal-body .modal-innercontent .donate-wrapper {
+    column-gap: 15px;
+  }
+  .ibadat_modalpop .modal-dialog .ibadat-content .modal-body .modal-innercontent .donate-wrapper .donate-box1 span {
+    width: 65px;
+    height: 65px;
+  }
+  .ibadat_modalpop .modal-dialog .ibadat-content .modal-body .modal-innercontent .donate-wrapper .donate-box1 span a svg {
+    width: 30px;
+  }
+  .ibadat_modalpop .modal-dialog .ibadat-content .modal-body .modal-innercontent .donation-formbox h6 a {
+    font-size: 22px;
+  }
+  .ibadat_modalpop .modal-dialog .ibadat-content .modal-body .btn-closebox {
+    width: 45px;
+    height: 45px;
+  }
+  .ibadat-home-sec-team-wrapper .home-sec-team-inner-wrapper .team-main-box {
+    width: 40%;
+  }
+  .ibadat-home-sec-team-wrapper .home-sec-team-inner-wrapper {
+    flex-wrap: wrap;
+  }
+  .ibadat-home-sec-charity-wrapper .home-sec-charity-wrapper {
+    flex-direction: column;
+    gap: 0;
+  }
+  .ibadat-home-sec-charity-wrapper .home-sec-charity-wrapper .charity-sldier-wrapper {
+    width: 100%;
+  }
+  .ibadat-home-sec-charity-wrapper .home-sec-charity-wrapper .charity-content-wrapper {
+    width: 100%;
+    padding-bottom: 50px;
+  }
+  .ibadat-home-sec-testimonial-wrapper .home-sec-testimonial-wrapper {
+    flex-direction: column;
+  }
+  .ibadat-home-sec-testimonial-wrapper .home-sec-testimonial-wrapper .test-content {
+    width: 100%;
+  }
+  .ibadat-home-sec-testimonial-wrapper .home-sec-testimonial-wrapper .test-slider-wrapper {
+    width: 100%;
+    margin-top: 50px;
+  }
+  .ibadat-home-sec-testimonial-wrapper .home-sec-testimonial-wrapper:before {
+    display: none;
+  }
+  .ibadat-home-sec-testimonial-wrapper .home-sec-testimonial-wrapper:after {
+    display: none;
+  }
+  .ibadat-home-sec-blog-wrapper .home-sec-blog-wrapper .service-box-wrapper {
+    width: 48%;
+  }
+  .ibadat-home-sec-blog-wrapper .home-sec-blog-wrapper {
+    flex-wrap: wrap;
+  }
+  .ibadat-home-sec-pillars-wrapper .home-sec-pillars-wrapper .pillars-box .pillars-title {
+    font-size: 20px;
+  }
+  .ibadat-home-sec-pillars-wrapper .home-sec-pillars-wrapper .pillars-box .pillars-icon p {
+    font-size: 15px;
+  }
+  .ibadat-home-sec-upcoming-wrapper .home-sec-up-slider-wrapper .upcoming-item {
+    flex-direction: column;
+  }
+  .ibadat-home-sec-upcoming-wrapper .home-sec-up-slider-wrapper .upcoming-item .upcoming-img {
+    width: 100%;
+  }
+  .ibadat-home-sec-upcoming-wrapper .home-sec-up-slider-wrapper .upcoming-item .upcoming-content {
+    width: 100%;
+  }
+  .ibadat-home-sec-team-wrapper:after {
+    display: none;
+  }
+  .ibadat-home-sec-subcribe-main-wrapper .subcribe-wrapper {
+    padding-right: 0;
+  }
+  .ibadat-home-sec-subcribe-main-wrapper .subcribe-wrapper {
+    flex-direction: column;
+  }
+  .ibadat-home-sec-subcribe-main-wrapper .subcribe-wrapper .subcribe-text {
+    width: 100%;
+  }
+  .ibadat-home-sec-subcribe-main-wrapper .subcribe-wrapper .subcribe-search {
+    width: 100%;
+    margin-top: 30px;
+  }
+  .ibadat-home-sec-about-wrapper .home-about-inner-wrapper {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .ibadat-home-sec-about-wrapper .home-about-inner-wrapper .home-about-content {
+    width: 100%;
+  }
+  .ibadat-home-sec-about-wrapper .home-about-inner-wrapper .home-about-img {
+    width: 100%;
+  }
+  .ibadat-home-sec-banner-wrapper {
+    background-color: #13291d;
+    background-image: none;
+    padding: 60px 0px;
+    margin-top: 86px;
+  }
+  .ibadat-home-sec-banner-wrapper .home-sec-slider .home-sec-inner-slider .slider-content {
+    max-width: 100%;
+    width: 48%;
+    margin-left: auto;
+  }
+  .ibadat-home-sec-banner-wrapper .home-sec-slider .home-sec-inner-slider .slider-img {
+    width: 40%;
+  }
+  .ibadat-home-sec-srvices-wrapper .ibadat-main-service-inner-wrapper .service-box {
+    width: 48%;
+  }
+  .ibadat-audio-home-sec-wrapper .ibadat-audio-wrapper {
+    flex-direction: column;
+  }
+  .ibadat-audio-home-sec-wrapper .ibadat-audio-wrapper .book-text {
+    width: 100%;
+  }
+  .ibadat-home-sec-prayer-time-wrapper .home-sec-prayer-inner-wrapper .pray-inner-wrapper {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .ibadat-home-sec-prayer-time-wrapper .home-sec-prayer-inner-wrapper .pray-inner-wrapper .pray-box {
+    width: 25%;
+  }
+  .ibadat-home-sec-gallery-main-wrapper .gallery-tabs-wrapper {
+    flex-direction: column;
+    row-gap: 30px;
+  }
+  .ibadat-home-sec-gallery-main-wrapper {
+    padding-top: 0;
+  }
+  .ibadat-home-sec-testimonial-wrapper {
+    padding-top: 0;
+  }
+  .ibadat-home-sec-testimonial-wrapper .home-sec-testimonial-wrapper .test-slider-wrapper .owl-nav .owl-prev {
+    left: inherit;
+    right: 10%;
+    bottom: -45%;
+    top: inherit;
+  }
+  .ibadat-home-sec-testimonial-wrapper .home-sec-testimonial-wrapper .test-slider-wrapper .owl-nav .owl-next {
+    left: inherit;
+    right: 2%;
+    bottom: -45%;
+    top: inherit;
+  }
+}
+
+/*--width 820 --*/
+@media (max-width: 820px) {
+  .login_box_main_wrapper .signin-wrapper .left-side form .login-btn-sec .social-btn span {
+    padding: 0px 10px;
+  }
+}
+
+@media (max-width: 767px) {
+  .ibadat-praying-main-wrapper .praying-main-wrapper .prayers-types-wrapper .prayer-name {
+    width: 32%;
+  }
+  .ibadat-our-team-main-wrapper .our-team-main-box {
+    justify-content: center;
+  }
+  .ibadat-our-team-main-wrapper .our-team-main-box .team-wrapper {
+    width: 100%;
+    margin-bottom: 30px;
+  }
+  .ibadat-event-text-main-wrapper .event-inner-main-wraper .event-single-blog-wrapper .event-img-wrapper .custom-counter .sectionClass .projectFactsWrap .item .number {
+    font-size: 40px;
+  }
+  .ibadat-event-text-main-wrapper .event-inner-main-wraper .event-single-blog-wrapper .event-img-wrapper .custom-counter .sectionClass .projectFactsWrap .item p {
+    font-size: 20px;
+  }
+  .ibadat-event-text-main-wrapper .event-inner-main-wraper .event-blog-sidebar .event-blog-wrapper .date-tag {
+    top: 52%;
+  }
+  .ibadat-gallery-main-wrapper .tab-content .tab-pane .gallery-main-block .portfolio_img_wrapper {
+    width: 48%;
+  }
+  .ibadat-sermons-wrapper .sermons-blog-wrapper .sermons-blog {
+    width: 100%;
+  }
+  .ibadat-seremons-list-main-wrapper .sermons-list-tabs-wrappper .sermons-text .tab-content .tab-pane .tabs-content-wrapper {
+    flex-direction: column;
+  }
+  .ibadat-seremons-list-main-wrapper .sermons-list-tabs-wrappper .sermons-text .tab-content .tab-pane .tabs-content-wrapper .tabs-img {
+    width: 100%;
+  }
+  .ibadat-seremons-list-main-wrapper .sermons-list-tabs-wrappper .sermons-text .tab-content .tab-pane .tabs-content-wrapper .tabs-info {
+    width: 100%;
+  }
+  .ibadat-seremons-list-main-wrapper {
+    width: 100%;
+    padding: 0px 0px 60px;
+  }
+  .ibadat-cause-grid-main-wrapper .tab-content .tab-pane .event-inner-main-wraper .event-blog-wrapper {
+    width: 100%;
+  }
+  .ibadat-cause-grid-main-wrapper .cause-grid-top-wrappper .search-box {
+    width: 40%;
+  }
+  .ibadat-blog-single-form-wrapper .blog-form-list-wrapper .ibadat-donation-wrapper .amount-tag-wrapper {
+    align-items: self-start;
+    gap: 10px;
+    flex-direction: column;
+  }
+  .ibadat-blog-single-form-wrapper .blog-form-list-wrapper .ibadat-donation-wrapper .amount-tag-wrapper .input-box {
+    width: 100%;
+  }
+  .ibadat-blog-single-form-wrapper .blog-form-list-wrapper .ibadat-donation-wrapper .amount-tag-wrapper .cat {
+    width: 100%;
+  }
+  .event-grid-wrapper .event-inner-main-wraper .event-blog-wrapper .date-tag {
+    top: inherit;
+    bottom: 241px;
+  }
+  .event-grid-wrapper .event-inner-main-wraper .event-blog-wrapper {
+    width: 100%;
+  }
+  .ibadat-five-pillars-main-wrapper .pillars-main-wrapper .border-img-wrapper .pillard-block-wrapper {
+    width: 100%;
+  }
+  .ibadat-five-pillars-main-wrapper .pillars-main-wrapper .border-img-wrapper {
+    width: 46%;
+  }
+  .ibadat-five-pillars-main-wrapper .pillars-main-wrapper .border-img-wrapper .pillard-block-wrapper .pillars-icon {
+    left: 33%;
+  }
+  .ibadat-service-main-wrapper {
+    height: 100%;
+    padding: 60px 0px 70px;
+  }
+  .ibadat-praying-main-wrapper {
+    margin-top: 0;
+  }
+  .ibadat-main-banner-wrapper .ibadat-main-slider-wrapper .home-slider .slider-wrapper .slide-text .left-title h4 {
+    font-size: 30px;
+  }
+  .ibadat-main-banner-wrapper .ibadat-main-slider-wrapper .home-slider .slider-wrapper .slide-text .left-title h2 {
+    font-size: 30px;
+    line-height: 34px;
+  }
+  .ibadat-audio-main-wrapper .ibadat-audio-wrapper .book-text h2 {
+    font-size: 30px;
+  }
+  .ibadat-about-main-wrapper .ibadat-about-main-content-wrapper .about-text-wrappper .left-title h2 {
+    font-size: 28px;
+    line-height: 30px;
+  }
+  .ibadat-five-pillars-main-wrapper .center-title h2 {
+    font-size: 30px;
+  }
+  .ibadat-charity-main-wrapper .center-title h2 {
+    font-size: 30px;
+  }
+  .ibadat-upcoming-events-main-wrapper .center-title h2 {
+    font-size: 30px;
+  }
+  .ibadat-service-main-wrapper .center-title h2 {
+    font-size: 30px;
+  }
+  .ibadat-praying-main-wrapper .praying-main-wrapper .left-title h2 {
+    font-size: 30px;
+    line-height: 30px;
+  }
+  .ibadat-islamic-praying-main-wrapper .center-title h2 {
+    font-size: 30px;
+  }
+  .ibadat-gallery-main-wrapper .gallery-tabs-wrapper .left-title h2 {
+    font-size: 30px;
+  }
+  .ibadat-our-team-main-wrapper .center-title h2 {
+    font-size: 30px;
+  }
+  .ibadat-blog-main-wrapper .blog-main-wrapper .left-title h2 {
+    font-size: 30px;
+  }
+  .ibadat-subcribe-main-wrapper .subcribe-wrapper {
+    padding-right: 0;
+  }
+  .ibadat-service-main-wrapper .service-slider-wrapper .owl-dots .owl-dot.active span {
+    background-color: #f8f2e8;
+  }
+  .ibadat-service-main-wrapper .service-slider-wrapper .owl-dots .owl-dot span {
+    background-color: #C7C7C7;
+    width: 37px;
+    height: 7px;
+  }
+  .main-header-wrapper1 .right-sidebar .toggle-content .search-box span {
+    right: 20px;
+  }
+  .main-header-wrapper1 .right-sidebar .toggle-content .search-box {
+    padding: 0;
+  }
+  .ibadat-event-text-main-wrapper .event-inner-main-wraper .event-single-blog-wrapper .event-img-wrapper .custom-counter .count-down-wrappper ul li {
+    font-size: 20px;
+    text-align: center;
+  }
+  .ibadat-event-text-main-wrapper .event-inner-main-wraper .event-single-blog-wrapper .event-img-wrapper .custom-counter .count-down-wrappper ul li span {
+    font-size: 34px !important;
+  }
+  .ibadat_modalpop .modal-dialog {
+    max-width: 560px;
+    height: 530px;
+  }
+  .ibadat_modalpop .modal-dialog .ibadat-content .modal-body .modal-innercontent .donate-wrapper .donate-box2 h3 a {
+    font-size: 30px;
+  }
+  .ibadat_modalpop .modal-dialog .ibadat-content .modal-body .modal-innercontent {
+    padding: 30px;
+  }
+  .ibadat_modalpop .modal-dialog .ibadat-content .modal-body .modal-innercontent .donate-wrapper {
+    column-gap: 10px;
+    margin-bottom: 10px;
+  }
+  .ibadat_modalpop .modal-dialog .ibadat-content .modal-body .modal-innercontent .donation-formbox .amount_box ul {
+    flex-wrap: wrap;
+    row-gap: 10px;
+  }
+  .ibadat_modalpop .modal-dialog .ibadat-content .modal-body .modal-innercontent .donation-formbox .modal-btnbox {
+    flex-wrap: wrap;
+    row-gap: 10px;
+    column-gap: 15px;
+    margin-top: 25px;
+  }
+  .ibadat-event-text-main-wrapper .event-inner-main-wraper .single-blog-wrapper.blog-4-coloumn .multi-blog-wrapper .event-blog-wrapper {
+    width: 100%;
+  }
+  .ibadat-praying-main-wrapper .praying-main-wrapper.pray-learn-timing-wrapper .prayers-types-wrapper .prayer-name {
+    width: 30%;
+  }
+  .ibadat-home-sec-community-wrapper .home-sec-community-wrapper {
+    flex-direction: column;
+  }
+  .ibadat-home-sec-community-wrapper .home-sec-community-wrapper .community-box {
+    width: 100%;
+  }
+  .ibadat-home-sec-testimonial-wrapper .home-sec-testimonial-wrapper .test-slider-wrapper {
+    border-radius: 0px;
+  }
+  .ibadat-home-sec-testimonial-wrapper .home-sec-testimonial-wrapper .test-slider-wrapper .testi-item {
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  .ibadat-home-sec-testimonial-wrapper .home-sec-testimonial-wrapper .test-slider-wrapper .testi-item .testi-text {
+    width: 100%;
+  }
+  .ibadat-home-sec-testimonial-wrapper .home-sec-testimonial-wrapper .test-slider-wrapper .testi-item .testi-text p {
+    font-size: 15px;
+    text-align: center;
+    padding-top: 6px;
+  }
+  .ibadat-home-sec-testimonial-wrapper .home-sec-testimonial-wrapper .test-slider-wrapper .testi-item .testi-text h4 {
+    text-align: center;
+  }
+  .ibadat-home-sec-testimonial-wrapper .home-sec-testimonial-wrapper .test-slider-wrapper .testi-item .testi-text ul {
+    justify-content: center;
+  }
+  .ibadat-home-sec-pillars-wrapper .home-sec-pillars-wrapper .pillars-box h2 {
+    display: none;
+  }
+  .ibadat-home-sec-pillars-wrapper .home-sec-pillars-wrapper {
+    flex-wrap: wrap;
+  }
+  .ibadat-home-sec-pillars-wrapper .home-sec-pillars-wrapper .pillars-box {
+    width: 30%;
+  }
+  .ibadat-home-sec-team-wrapper .home-sec-team-inner-wrapper .team-main-box .team-img img {
+    width: 100%;
+  }
+  .ibadat-stay-connected-main-wrapper .stay-connected-wrapper .left-title {
+    width: 100%;
+  }
+  .ibadat-stay-connected-main-wrapper .stay-connected-wrapper .left-title h2 {
+    font-size: 30px;
+    line-height: 30px;
+  }
+  .ibadat-home-sec-blog-wrapper .home-sec-blog-wrapper .service-box-wrapper {
+    width: 100%;
+  }
+  .ibadat-home-sec-srvices-wrapper .ibadat-main-service-inner-wrapper .service-box {
+    width: 70%;
+  }
+  .ibadat-home-sec-prayer-time-wrapper .home-sec-prayer-inner-wrapper .pray-inner-wrapper .pray-box {
+    width: 33%;
+  }
+  .ibadat-audio-home-sec-wrapper .ibadat-audio-wrapper .book-img {
+    width: 60%;
+  }
+  .ibadat-home-sec-testimonial-wrapper .home-sec-testimonial-wrapper .test-slider-wrapper .owl-nav .owl-prev {
+    bottom: inherit;
+    position: inherit;
+  }
+  .ibadat-home-sec-testimonial-wrapper .home-sec-testimonial-wrapper .test-slider-wrapper .owl-nav .owl-next {
+    bottom: inherit;
+    position: inherit;
+  }
+}
+
+@media (max-width: 680px) {
+  .ibadat-event-text-main-wrapper .event-inner-main-wraper .event-blog-sidebar .event-blog-wrapper .date-tag {
+    top: inherit;
+    bottom: 20%;
+  }
+  .ibadat-event-text-main-wrapper .event-inner-main-wraper .event-blog-sidebar {
+    width: 100%;
+  }
+  .ibadat-gallery-main-wrapper .tab-content .tab-pane .gallery-main-block.gallery-2-wrapper .portfolio_img_wrapper {
+    width: 100%;
+  }
+  .ibadat-gallery-main-wrapper .tab-content .tab-pane .gallery-main-block .portfolio_img_wrapper {
+    width: 100%;
+  }
+  .ibadat-gallery-main-wrapper .tab-content .tab-pane .gallery-main-block.gallery-4-wrapper .portfolio_img_wrapper {
+    width: 100%;
+  }
+  .ibadat-event-text-main-wrapper .event-inner-main-wraper .single-blog-wrapper .multi-blog-wrapper .event-blog-wrapper {
+    width: 100%;
+  }
+  .ibadat-five-pillars-main-wrapper .pillars-main-wrapper .border-img-wrapper .pillard-block-wrapper .pillars-icon {
+    left: 28%;
+  }
+  .ibadat-subcribe-main-wrapper:after {
+    display: none;
+  }
+  .ibadat-gallery-main-wrapper .filters-content .item .portfolio_img_wrapper {
+    width: 100%;
+  }
+  .ibadat-service-main-wrapper .service-slider-wrapper .owl-dots .owl-dot {
+    margin-top: 0px;
+  }
+  .ibadat-home-sec-team-wrapper .home-sec-team-inner-wrapper .team-main-box {
+    width: 47%;
+  }
+}
+
+@media (max-width: 600px) {
+  .ibadat-stay-connected-main-wrapper .stay-connected-wrapper .left-title {
+    width: 100%;
+  }
+  .ibadat-stay-connected-main-wrapper .stay-connected-wrapper .stay-img-wrapper {
+    flex-direction: column;
+  }
+  .ibadat-event-text-main-wrapper .event-inner-main-wraper .event-single-blog-wrapper .event-img-wrapper .custom-counter .sectionClass .projectFactsWrap .item .number {
+    font-size: 20px;
+  }
+  .ibadat-event-text-main-wrapper .event-inner-main-wraper .event-single-blog-wrapper .event-img-wrapper .custom-counter .sectionClass .projectFactsWrap .item p {
+    font-size: 15px;
+  }
+  .tp-caption.WebProduct-Title, .WebProduct-Title {
+    font-size: 20px !important;
+    line-height: 30px !important;
+  }
+  .ibadat-praying-main-wrapper .praying-main-wrapper.pray-learn-timing-wrapper .prayers-types-wrapper .prayer-name {
+    width: 48%;
+  }
+  .ibadat-home-sec-banner-wrapper .home-sec-slider .home-sec-inner-slider .slider-content h4 {
+    font-size: 20px;
+  }
+  .ibadat-home-sec-banner-wrapper .home-sec-slider .home-sec-inner-slider .slider-content h2 {
+    font-size: 30px;
+  }
+  .ibadat-home-sec-prayer-time-wrapper .home-sec-prayer-inner-wrapper .pray-inner-wrapper .pray-box {
+    width: 50%;
+    padding-bottom: 20px;
+  }
+}
+
+/*---width 580--*/
+@media (max-width: 580px) {
+  .ibadat-event-text-main-wrapper .event-inner-main-wraper .event-blog-sidebar .event-blog-wrapper .date-tag {
+    bottom: 30%;
+  }
+  .ibadat-five-pillars-main-wrapper .pillars-main-wrapper .border-img-wrapper .pillard-block-wrapper .pillars-icon {
+    left: 25%;
+  }
+  .ibadat-inner-banner-main-wrapper {
+    background-image: none;
+    background-image: linear-gradient(to bottom, #094e28, #09552b, #085c2f, #086332, #076a36);
+    height: 320px;
+    padding: 60px 0px 0px;
+  }
+  .inner-page-title {
+    text-align: center;
+  }
+  .inner-page-title ul {
+    justify-content: center;
+  }
+}
+
+@media (max-width: 575px) {
+  .ibadat-praying-main-wrapper .praying-main-wrapper .prayers-types-wrapper .prayer-name {
+    width: 42%;
+  }
+  .ibadat-our-team-main-wrapper .our-team-main-box .team-wrapper {
+    width: 100%;
+    margin-bottom: 30px;
+  }
+  .ibadat-testimonial-main-wrapper .ibadat-test-main-block .testimonial-slider .testimonial-wrappper {
+    width: 100%;
+  }
+  .ibadat-event-text-main-wrapper .event-inner-main-wraper .event-blog-wrapper .event-text h4 {
+    font-size: 24px;
+  }
+  .ibadat-cause-grid-main-wrapper .cause-grid-top-wrappper {
+    flex-direction: column;
+  }
+  .ibadat-cause-grid-main-wrapper .cause-grid-top-wrappper .search-box {
+    width: 100%;
+    margin-bottom: 15px;
+  }
+  .ibadat-cause-grid-main-wrapper .cause-grid-top-wrappper .menu-tabs .tabs-panel-wrapper .select-category {
+    width: 50%;
+  }
+  .ibadat-cause-grid-main-wrapper .cause-grid-top-wrappper .menu-tabs .tabs-panel-wrapper .select-category select {
+    width: 100%;
+  }
+  .ibadat_modalpop .modal-dialog {
+    max-width: 100%;
+    height: 550px;
+  }
+  .ibadat_modalpop .modal-dialog .ibadat-content .modal-body .modal-innercontent .donate-wrapper {
+    flex-wrap: wrap;
+    row-gap: 10px;
+  }
+  .ibadat_modalpop .modal-dialog .ibadat-content .modal-body .modal-innercontent .donate-wrapper .donate-box2 h3 a {
+    font-size: 25px;
+  }
+  .ibadat_modalpop .modal-dialog .ibadat-content .modal-body .modal-innercontent .donation-formbox h6 a {
+    font-size: 20px;
+  }
+  .ibadat-event-text-main-wrapper .event-inner-main-wraper .single-blog-wrapper.blog-3-coloumn .multi-blog-wrapper .event-blog-wrapper {
+    width: 100%;
+  }
+  .ibadat-home-sec-banner-wrapper .home-sec-slider .home-sec-inner-slider {
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  .ibadat-home-sec-banner-wrapper .home-sec-slider .home-sec-inner-slider .slider-content {
+    max-width: 100%;
+    width: 100%;
+    margin-left: 0;
+    text-align: center;
+  }
+  .ibadat-home-sec-banner-wrapper .home-sec-slider .home-sec-inner-slider .slider-content img {
+    display: initial;
+  }
+  .ibadat-home-sec-banner-wrapper .home-sec-slider .home-sec-inner-slider .slider-img {
+    width: 46%;
+  }
+  .ibadat-home-sec-srvices-wrapper .ibadat-main-service-inner-wrapper .service-box {
+    width: 100%;
+  }
+  .ibadat-home-sec-pillars-wrapper .home-sec-pillars-wrapper .pillars-box {
+    width: 46%;
+  }
+  .ibadat-home-sec-gallery-main-wrapper .tab-content .tab-pane .gallery-main-wrapper {
+    flex-direction: column;
+  }
+  .ibadat-home-sec-gallery-main-wrapper .tab-content .tab-pane .gallery-main-wrapper .portfolio_img_wrapper.small-portfolio {
+    width: 100%;
+  }
+  .ibadat-home-sec-gallery-main-wrapper .tab-content .tab-pane .gallery-main-wrapper .portfolio_img_wrapper {
+    width: 100%;
+  }
+  .ibadat-audio-home-sec-wrapper .ibadat-audio-wrapper .book-text h2 {
+    font-size: 30px;
+    margin-top: 20px;
+  }
+  .ibadat-home-sec-charity-wrapper .home-sec-charity-wrapper .charity-content-wrapper form .form-box {
+    flex-direction: column;
+  }
+  .ibadat-home-sec-banner-wrapper .home-sec-slider .owl-nav .owl-prev {
+    position: inherit;
+    right: inherit;
+    background-color: #ffffff3d;
+  }
+  .ibadat-home-sec-banner-wrapper .home-sec-slider .owl-nav .owl-next {
+    position: inherit;
+    right: inherit;
+    background-color: #ffffff3d;
+  }
+}
+
+@media (max-width: 540px) {
+  .ibadat-five-pillars-main-wrapper .pillars-main-wrapper .border-img-wrapper .pillard-block-wrapper .pillars-icon {
+    left: 24%;
+  }
+  .ibadat-praying-main-wrapper .praying-main-wrapper.pray-learn-timing-wrapper .prayers-types-wrapper .prayer-name {
+    width: 100%;
+  }
+  .ibadat-home-sec-about-wrapper .home-about-inner-wrapper .home-about-content h2 {
+    font-size: 21px;
+    line-height: 20px;
+  }
+  .ibadat-home-sec-about-wrapper .home-about-inner-wrapper .home-about-content .about-tag-wrapper .tag-text h4 {
+    font-size: 18px;
+  }
+  .ibadat-home-sec-about-wrapper:after {
+    display: none;
+  }
+}
+
+/*-- width 480 --*/
+@media (max-width: 480px) {
+  .ibadat-event-text-main-wrapper .event-inner-main-wraper .blog-single-main-wrapper .client-comment-wrapper .comment-main-wrapper .comment-blog-wrapper {
+    flex-direction: column;
+  }
+  .ibadat-event-text-main-wrapper .event-inner-main-wraper .blog-single-main-wrapper .client-comment-wrapper .comment-main-wrapper .comment-blog-wrapper .comment-text {
+    width: 100%;
+  }
+  .ibadat-subcribe-main-wrapper .subcribe-wrapper .subcribe-text h4 {
+    font-size: 20px;
+  }
+  .ibadat-subcribe-main-wrapper .subcribe-wrapper .subcribe-text span {
+    width: 75px;
+    height: 75px;
+  }
+  .ibadat-subcribe-main-wrapper .subcribe-wrapper .subcribe-search button {
+    position: inherit;
+    margin-top: 10px;
+    margin-left: 10px;
+  }
+  .ibadat-event-text-main-wrapper .event-inner-main-wraper .blog-single-main-wrapper .blog-footer-wrapper {
+    flex-direction: column;
+  }
+  .ibadat-event-text-main-wrapper .event-inner-main-wraper .event-single-blog-wrapper .event-text-wrapper .date-wrapper {
+    flex-direction: column;
+    gap: 8px;
+  }
+  .ibadat-event-text-main-wrapper .event-inner-main-wraper .event-single-blog-wrapper .event-text-wrapper .event-footer-wrapper {
+    flex-direction: column;
+    align-items: self-start;
+  }
+  .ibadat-event-text-main-wrapper .event-inner-main-wraper .event-single-blog-wrapper .event-text-wrapper .event-footer-wrapper .share-icon-wrapper {
+    margin-top: 20px;
+  }
+  .ibadat-event-text-main-wrapper .event-inner-main-wraper .event-single-blog-wrapper .event-img-wrapper .custom-counter .sectionClass .projectFactsWrap {
+    padding: 12px 4px;
+  }
+  .ibadat-event-text-main-wrapper .event-inner-main-wraper .event-single-blog-wrapper .event-img-wrapper .custom-counter .sectionClass .projectFactsWrap .item {
+    gap: 0px;
+  }
+  .ibadat-five-pillars-main-wrapper .pillars-main-wrapper .border-img-wrapper .pillard-block-wrapper .pillars-icon {
+    left: 20%;
+  }
+  .ibadat-five-pillars-main-wrapper .pillars-main-wrapper .border-img-wrapper {
+    width: 100%;
+  }
+  .ibadat-five-pillars-main-wrapper .pillars-main-wrapper .border-img-wrapper {
+    margin-top: 100px;
+  }
+  .ibadat-five-pillars-main-wrapper .pillars-main-wrapper .border-img-wrapper .pillard-block-wrapper .pillars-icon {
+    left: 39%;
+    top: -37%;
+    bottom: inherit;
+  }
+  .ibadat-five-pillars-main-wrapper .pillars-main-wrapper .border-img-wrapper.bottom-border-wrapper .pillard-block-wrapper .pillars-icon {
+    top: -37%;
+  }
+  .ibadat-five-pillars-main-wrapper .pillars-main-wrapper {
+    margin-top: 0;
+  }
+  .ibadat-about-main-wrapper .ibadat-about-main-content-wrapper .about-img-wrapper .circle-img .img-bless {
+    width: 299px;
+    height: 299px;
+  }
+  .ibadat-about-main-wrapper .ibadat-about-main-content-wrapper .about-text-wrappper .about-mission-wrapper {
+    flex-direction: column;
+  }
+  .ibadat-audio-main-wrapper .ibadat-audio-wrapper .book-img img {
+    width: 100%;
+  }
+  .ibadat-about-main-wrapper .ibadat-about-main-content-wrapper .about-img-wrapper .circle-img {
+    width: 380px;
+    height: 380px;
+  }
+  .ibadat-charity-main-wrapper .charity-main-wrapper {
+    padding: 0px;
+  }
+  .ibadat-event-text-main-wrapper .event-inner-main-wraper .event-single-blog-wrapper .event-img-wrapper .custom-counter .count-down-wrappper ul li {
+    font-size: 16px;
+  }
+  .ibadat-event-text-main-wrapper .event-inner-main-wraper .event-single-blog-wrapper .event-img-wrapper .custom-counter .count-down-wrappper {
+    padding: 8px;
+  }
+  .ibadat-home-sec-team-wrapper .home-sec-team-inner-wrapper .team-main-box {
+    width: 100%;
+  }
+}
+
+/*-- width 450 --*/
+@media (max-width: 450px) {
+  .ibadat-praying-main-wrapper .praying-main-wrapper .prayers-types-wrapper .prayer-name {
+    width: 100%;
+  }
+  .ibadat-event-text-main-wrapper .event-inner-main-wraper .single-blog-wrapper .multi-blog-wrapper .event-blog-wrapper .event-text .date-wrapper {
+    align-items: self-start;
+    gap: 4px;
+    flex-direction: column;
+  }
+  .ibadat-islamic-praying-main-wrapper .namaj-wrapper img {
+    padding-top: 30px;
+  }
+  .ibadat-home-sec-banner-wrapper .home-sec-slider .home-sec-inner-slider .slider-content img {
+    width: 200px;
+  }
+}
+
+/*-- width 420 --*/
+@media (max-width: 420px) {
+  .ibadat-cause-grid-main-wrapper .tab-content .tab-pane .event-inner-main-wraper .event-blog-wrapper .event-text .donate-need {
+    align-items: self-start;
+    flex-direction: column;
+  }
+  .ibadat-five-pillars-main-wrapper .pillars-main-wrapper .border-img-wrapper .pillard-block-wrapper .pillars-icon {
+    left: 34%;
+  }
+  .ibadat_modalpop .modal-dialog {
+    max-width: 100%;
+    height: 580px;
+  }
+  .ibadat_modalpop .modal-dialog .ibadat-content .modal-body .modal-innercontent .donation-formbox .amount_box ul li .amount_btn_box a {
+    width: 130px;
+  }
+  .ibadat_modalpop .modal-dialog .ibadat-content .modal-body .modal-innercontent .donation-formbox .modal-btnbox .donatebtnbox a {
+    width: 280px;
+  }
+  .ibadat_modalpop .modal-dialog .ibadat-content .modal-body .modal-innercontent .donation-formbox form input {
+    padding: 15px 0px 15px 15px;
+    font-size: 14px;
+  }
+  .ibadat-home-sec-pillars-wrapper .home-sec-pillars-wrapper .pillars-box {
+    width: 100%;
+  }
+  .ibadat-home-sec-upcoming-wrapper .home-sec-up-slider-wrapper .upcoming-item .upcoming-content ul li {
+    font-size: 14px;
+  }
+  .ibadat-home-sec-prayer-time-wrapper .home-sec-prayer-inner-wrapper .pray-inner-wrapper .pray-box {
+    width: 100%;
+  }
+  .ibadat-home-sec-about-wrapper .home-about-inner-wrapper .home-about-content .about-tag-wrapper {
+    display: flex;
+    flex-direction: column;
+  }
+  .ibadat-home-sec-about-wrapper .home-about-inner-wrapper .home-about-content .about-tag-wrapper .tag-text {
+    text-align: center;
+    padding: 10px 0px;
+    position: inherit;
+    width: 100%;
+    bottom: inherit;
+    left: inherit;
+  }
+}
+
+@media (max-width: 380px) {
+  .food-inner-page-content-wrapper .food-chef-single-main-wrapper .chef-prfile .personal-details .details .chef-info {
+    flex-direction: column;
+  }
+  .main-header-wrapper1 .sb-main-header1 .mobile-menu-wrapper .mobile-logo a img {
+    width: 130px;
+  }
+  .event-grid-wrapper .event-inner-main-wraper .event-blog-wrapper .date-tag {
+    top: inherit;
+    bottom: 255px;
+  }
+  .center-title h4:before {
+    left: -50px !important;
+    width: 40px !important;
+  }
+  .center-title h4:after {
+    right: -50px !important;
+    top: 5px !important;
+    width: 42px !important;
+  }
+  .ibadat-about-main-wrapper .ibadat-about-main-content-wrapper .about-img-wrapper .circle-img .img-bless {
+    width: 250px;
+    height: 250px;
+  }
+  .section_1 .icon_wrapper {
+    flex-direction: column;
+    gap: 30px;
+  }
+  .section_1 .icon_wrapper .icon_content_red {
+    width: 100%;
+    padding-left: 0;
+  }
+  .section_1 .icon_wrapper .icon_content_blue {
+    width: 100%;
+    padding-left: 0;
+  }
+  .section_1 .icon_wrapper .icon_content_green {
+    width: 100%;
+    padding-left: 0;
+  }
+  .iphone_image_wrapper {
+    margin-top: 30px;
+  }
+  .section_3 .about_text_wrapper .btn_discover {
+    display: flex;
+    margin-bottom: 30px;
+  }
+  .fi-section_7 .global_button_wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  .fi-section_7 .global_button_wrapper .btn_download {
+    margin-right: 0;
+  }
+  .ibadat-home-sec-banner-wrapper {
+    margin-top: 78px;
+  }
+}
+
+/*-- width 360 --*/
+@media (max-width: 360px) {
+  .index1-slider-wrapper .overlay-slider .slider-caption h2 {
+    font-size: 28px;
+  }
+  .index1-slider-wrapper .overlay-slider .slider-caption p {
+    font-size: 18px;
+    line-height: 25px;
+    padding-top: 20px;
+  }
+  .index1-slider-wrapper .overlay-slider .sldier-contact-form .treding-list li {
+    font-size: 13px;
+  }
+  .login_box_main_wrapper .signin-wrapper .left-side form .forgot {
+    font-size: 14px;
+  }
+  .login_box_main_wrapper .signin-wrapper .left-side form .round label span {
+    font-size: 14px;
+  }
+  .cond label {
+    line-height: 12px;
+  }
+  .login_box_main_wrapper .footer-form {
+    padding-top: 12px;
+  }
+  .login_box_main_wrapper .footer-form p {
+    font-size: 12px;
+  }
+  .login_box_main_wrapper .form-tabs .nav-pills .nav-item .nav-link {
+    width: 96px;
+  }
+  .login_box_main_wrapper .form-tabs .nav-pills {
+    max-width: 292px;
+  }
+  .main-header-wrapper1 .sb-main-header1 .mobile-menu-wrapper .social-media-icons {
+    padding-left: 0px;
+  }
+  .awesome-client-wrapper .awesome-slider .owl-nav {
+    top: -65px;
+  }
+  .event-grid-wrapper .event-inner-main-wraper .event-blog-wrapper .date-tag {
+    top: inherit;
+    bottom: 298px;
+  }
+  #sidebar {
+    width: 265px;
+  }
+  #sidebar #cssmenu {
+    width: 265px;
+  }
+  .ibadat_modalpop .modal-dialog {
+    max-width: 100%;
+    height: 550px;
+  }
+  .ibadat_modalpop .modal-dialog .ibadat-content .modal-body .modal-innercontent .donation-formbox .amount_box ul li .amount_btn_box a {
+    width: 100px;
+    font-size: 14px;
+  }
+  .ibadat_modalpop .modal-dialog .ibadat-content .modal-body .modal-innercontent {
+    padding: 20px;
+  }
+  .ibadat_modalpop .modal-dialog .ibadat-content .modal-body .modal-innercontent .donation-formbox .modal-btnbox .donatebtnbox a {
+    width: 245px;
+    height: 50px;
+  }
+  .ibadat_modalpop .modal-dialog .ibadat-content .modal-body .modal-innercontent .donation-formbox .modal-btnbox .backbtnbox a {
+    height: 50px;
+  }
+}
+
+/*--width 320 --*/
