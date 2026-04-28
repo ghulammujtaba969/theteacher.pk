@@ -1,15 +1,15 @@
 <?php
 class Database {
-    // private $host = 'localhost';
-    // private $db_name = 'syllabus_management';
-    // private $username = 'root';
-    // private $password = '';
-    // private $conn;
-    private $host = 'localhost';
-    private $db_name = 'u921830511_teacherpk';
-    private $username = 'u921830511_teacherpk_user';
-    private $password = '0Hwmc!c5p;';
+    private $host = DB_HOST;
+    private $db_name = DB_NAME;
+    private $username = DB_USER;
+    private $password = DB_PASS;
     private $conn;
+    // private $host = 'sdb-86.hosting.stackcp.net';
+    // private $db_name = 'syllabusms-353130306bcf';
+    // private $username = 'syllabusms-353130306bcf';
+    // private $password = '4ndqnhreo6';
+    // private $conn;
 
     public function getConnection() {
         $this->conn = null;

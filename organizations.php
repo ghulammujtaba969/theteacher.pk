@@ -2,6 +2,9 @@
 require_once 'config/config.php';
 require_once 'includes/functions.php';
 require_once 'classes/Organization.php';
+require_once 'classes/User.php';
+require_once 'classes/ClassModel.php';
+require_once 'classes/Role.php';
 
 // Check if user is logged in and has permission to manage organizations
 require_roles(['super_admin']);
@@ -10,6 +13,21 @@ $database = new Database();
 $db = $database->getConnection();
 $current_user = current_user();
 $organization = new Organization($db);
+$user_obj = new User($db);
+$class_obj = new ClassModel($db);
+$role_obj = new Role($db);
+
+// Get classes for permission assignment
+$classes = $class_obj->readAll([], true);
+// Find Organization Admin role ID
+$roles = $role_obj->getAll();
+$org_admin_role_id = 0;
+foreach ($roles as $r) {
+    if ($r['name'] === 'Organization Admin') {
+        $org_admin_role_id = $r['id'];
+        break;
+    }
+}
 
 $message = '';
 $error = '';
@@ -28,7 +46,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     'status' => $_POST['status']
                 ];
                 
-                if ($organization->create($data)) {
+                $new_org_id = $organization->create($data);
+                if ($new_org_id) {
+                    // Create Admin User if requested
+                    if (!empty($_POST['create_admin']) && $_POST['create_admin'] == '1') {
+                        $admin_data = [
+                            'username' => trim($_POST['admin_username']),
+                            'email' => trim($_POST['admin_email']),
+                            'full_name' => trim($_POST['admin_full_name']),
+                            'password' => $_POST['admin_password'],
+                            'role_id' => $org_admin_role_id,
+                            'organization_id' => $new_org_id,
+                            'status' => 'active'
+                        ];
+                        
+                        $new_user_id = $user_obj->create($admin_data, $current_user['id']);
+                        if ($new_user_id && !empty($_POST['class_ids'])) {
+                            foreach ($_POST['class_ids'] as $class_id) {
+                                $user_obj->assignClassPermission($new_user_id, $class_id, $current_user['id']);
+                            }
+                        }
+                    }
                     set_flash_message('Organization created successfully!', 'success');
                 } else {
                     set_flash_message('Failed to create organization. Please try again.', 'error');
@@ -48,6 +86,53 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 ];
                 
                 if ($organization->update($org_id, $data)) {
+                    // Handle Admin User
+                    $admin_user_id = !empty($_POST['admin_user_id']) ? $_POST['admin_user_id'] : null;
+                    
+                    if ($admin_user_id) {
+                        // Update existing admin
+                        $admin_data = [
+                            'username' => trim($_POST['admin_username']),
+                            'email' => trim($_POST['admin_email']),
+                            'full_name' => trim($_POST['admin_full_name']),
+                            'role_id' => $org_admin_role_id,
+                            'organization_id' => $org_id,
+                            'status' => 'active'
+                        ];
+                        
+                        $user_obj->update($admin_user_id, $admin_data);
+                        
+                        // Update password if provided
+                        if (!empty($_POST['admin_password'])) {
+                            $user_obj->updatePassword($admin_user_id, $_POST['admin_password']);
+                        }
+                        
+                        // Update permissions
+                        $user_obj->clearClassPermissions($admin_user_id);
+                        if (!empty($_POST['class_ids'])) {
+                            foreach ($_POST['class_ids'] as $class_id) {
+                                $user_obj->assignClassPermission($admin_user_id, $class_id, $current_user['id']);
+                            }
+                        }
+                    } elseif (!empty($_POST['create_admin']) && $_POST['create_admin'] == '1') {
+                        // Create new admin for existing organization
+                        $admin_data = [
+                            'username' => trim($_POST['admin_username']),
+                            'email' => trim($_POST['admin_email']),
+                            'full_name' => trim($_POST['admin_full_name']),
+                            'password' => $_POST['admin_password'],
+                            'role_id' => $org_admin_role_id,
+                            'organization_id' => $org_id,
+                            'status' => 'active'
+                        ];
+                        
+                        $new_user_id = $user_obj->create($admin_data, $current_user['id']);
+                        if ($new_user_id && !empty($_POST['class_ids'])) {
+                            foreach ($_POST['class_ids'] as $class_id) {
+                                $user_obj->assignClassPermission($new_user_id, $class_id, $current_user['id']);
+                            }
+                        }
+                    }
                     set_flash_message('Organization updated successfully!', 'success');
                 } else {
                     set_flash_message('Failed to update organization. Please try again.', 'error');
@@ -409,6 +494,68 @@ $flash = get_flash_message();
                             <label for="address" class="form-label h6 mb-8">Address</label>
                             <textarea class="form-control py-11" name="address" id="address" rows="2" placeholder="Enter organization address"></textarea>
                         </div>
+
+                        <!-- Organization Admin Section -->
+                        <div class="mt-24 pt-24 border-top border-gray-100">
+                            <div class="flex-between mb-16">
+                                <h6 class="mb-0">Organization Admin</h6>
+                                <div class="form-check form-switch" id="createAdminSwitchContainer">
+                                    <input class="form-check-input" type="checkbox" name="create_admin" id="createAdmin" value="1">
+                                    <label class="form-check-label" for="createAdmin">Manage Admin User</label>
+                                </div>
+                            </div>
+                            
+                            <input type="hidden" name="admin_user_id" id="adminUserId">
+                            
+                            <div id="adminFields" style="display: none;">
+                                <div class="row g-20">
+                                    <div class="col-md-6">
+                                        <label for="admin_full_name" class="form-label h6 mb-8">Full Name <span class="text-danger">*</span></label>
+                                        <input type="text" class="form-control py-11" name="admin_full_name" id="adminFullName" placeholder="Enter full name">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="admin_username" class="form-label h6 mb-8">Username <span class="text-danger">*</span></label>
+                                        <input type="text" class="form-control py-11" name="admin_username" id="adminUsername" placeholder="Enter username">
+                                    </div>
+                                </div>
+                                
+                                <div class="row g-20 mt-16">
+                                    <div class="col-md-6">
+                                        <label for="admin_email" class="form-label h6 mb-8">Email Address <span class="text-danger">*</span></label>
+                                        <input type="email" class="form-control py-11" name="admin_email" id="adminEmail" placeholder="Enter email address">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="admin_password" class="form-label h6 mb-8">Password <span class="admin-pass-label"></span></label>
+                                        <input type="password" class="form-control py-11" name="admin_password" id="adminPassword" placeholder="Enter password">
+                                        <small class="text-gray-400 edit-pass-note" style="display: none;">Leave blank to keep current password</small>
+                                    </div>
+                                </div>
+
+                                <div class="mt-16">
+                                    <label class="form-label h6 mb-8">Class/Course Access</label>
+                                    <div class="row g-10">
+                                        <?php if (empty($classes)): ?>
+                                            <div class="col-12 text-gray-400 text-13">No active classes available.</div>
+                                        <?php else: ?>
+                                            <?php foreach ($classes as $cls): ?>
+                                                <div class="col-md-4">
+                                                    <div class="form-check">
+                                                        <input class="form-check-input class-permission-checkbox" type="checkbox" name="class_ids[]" 
+                                                               value="<?php echo $cls['id']; ?>" id="class_<?php echo $cls['id']; ?>">
+                                                        <label class="form-check-label text-13" for="class_<?php echo $cls['id']; ?>">
+                                                            <?php echo htmlspecialchars($cls['class_name']); ?>
+                                                            <span class="badge bg-<?php echo $cls['type'] === 'class' ? 'info' : 'warning'; ?>-50 text-<?php echo $cls['type'] === 'class' ? 'info' : 'warning'; ?>-600 text-10">
+                                                                <?php echo ucfirst($cls['type']); ?>
+                                                            </span>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            <?php endforeach; ?>
+                                        <?php endif; ?>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         
                         <div class="flex-align justify-content-end gap-8 mt-24">
                             <button type="button" class="btn btn-outline-gray rounded-pill py-9" data-bs-dismiss="modal">Cancel</button>
@@ -493,6 +640,20 @@ $flash = get_flash_message();
 
             // Initialize tooltips
             $('[data-bs-toggle="tooltip"]').tooltip();
+
+            // Toggle admin fields
+            $('#createAdmin').on('change', function() {
+                if ($(this).is(':checked')) {
+                    $('#adminFields').slideDown();
+                    $('#adminFullName, #adminUsername, #adminEmail').prop('required', true);
+                    if ($('#formAction').val() === 'create') {
+                        $('#adminPassword').prop('required', true);
+                    }
+                } else {
+                    $('#adminFields').slideUp();
+                    $('#adminFullName, #adminUsername, #adminEmail, #adminPassword').prop('required', false);
+                }
+            });
         });
 
         function openCreateModal() {
@@ -501,6 +662,16 @@ $flash = get_flash_message();
             document.getElementById('submitBtn').innerHTML = '<i class="ph ph-plus me-2"></i>Create Organization';
             document.querySelector('#orgForm').reset();
             document.getElementById('orgId').value = '';
+            
+            // Reset Admin Section
+            document.getElementById('adminUserId').value = '';
+            document.getElementById('createAdmin').checked = false;
+            document.getElementById('adminFields').style.display = 'none';
+            document.querySelector('.admin-pass-label').innerHTML = '<span class="text-danger">*</span>';
+            document.querySelector('.edit-pass-note').style.display = 'none';
+            
+            // Uncheck all classes
+            document.querySelectorAll('.class-permission-checkbox').forEach(cb => cb.checked = false);
         }
         
         function editOrg(orgData) {
@@ -515,6 +686,40 @@ $flash = get_flash_message();
             document.getElementById('description').value = orgData.description || '';
             document.getElementById('address').value = orgData.address || '';
             document.getElementById('status').value = orgData.status;
+            
+            // Reset Admin Section
+            document.getElementById('adminUserId').value = '';
+            document.getElementById('createAdmin').checked = false;
+            document.getElementById('adminFields').style.display = 'none';
+            document.querySelectorAll('.class-permission-checkbox').forEach(cb => cb.checked = false);
+            
+            // Fill Admin details if exists
+            if (orgData.admin_user_id) {
+                document.getElementById('adminUserId').value = orgData.admin_user_id;
+                document.getElementById('adminFullName').value = orgData.admin_full_name || '';
+                document.getElementById('adminUsername').value = orgData.admin_username || '';
+                document.getElementById('adminEmail').value = orgData.admin_email || '';
+                document.getElementById('adminPassword').value = ''; // Don't show password
+                
+                document.getElementById('createAdmin').checked = true;
+                document.getElementById('adminFields').style.display = 'block';
+                
+                document.querySelector('.admin-pass-label').innerHTML = '';
+                document.querySelector('.edit-pass-note').style.display = 'block';
+                $('#adminPassword').prop('required', false);
+                
+                // Set class permissions
+                if (orgData.admin_class_ids) {
+                    const classIds = orgData.admin_class_ids.split(',');
+                    classIds.forEach(id => {
+                        const cb = document.getElementById('class_' + id);
+                        if (cb) cb.checked = true;
+                    });
+                }
+            } else {
+                document.querySelector('.admin-pass-label').innerHTML = '<span class="text-danger">*</span>';
+                document.querySelector('.edit-pass-note').style.display = 'none';
+            }
             
             new bootstrap.Modal(document.getElementById('orgModal')).show();
         }
