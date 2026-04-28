@@ -1,0 +1,5 @@
+(function(){var loadHandler=window['sl_{82431C43-8D86-4F23-ADF3-817FDCEF32E4}'];loadHandler&&loadHandler(52, '<div id="spr0_39a6fcb8"><div id="spr1_39a6fcb8" class="kern slide"><img id="img4_39a6fcb8" src="data/img1.png" width="1280px" height="720px" alt="" style="left:0px;top:0px;"/></div><div id="spr2_39a6fcb8" class="kern slide"><div id="spr3_39a6fcb8" style="left:543.75px;top:525px;"><img id="img0_39a6fcb8" src="data/img84.png" width="586.5" height="99" alt="ترجمہ عرفان القرآن کی آڈیو \
+"/></div><div id="spr4_39a6fcb8" style="left:443.25px;top:247.5px;"><img id="img1_39a6fcb8" src="data/img85.png" width="687" height="99.75" alt="لفظی اور با محاورہ ترجمہ  کی سلائیڈز\
+"/></div><div id="spr5_39a6fcb8" style="left:300.75px;top:72px;"><img id="img2_39a6fcb8" src="data/img86.png" width="862.5" height="108" alt="5۔ لفظی اور با محاورہ ترجمہ قرآن کی سلائیڈز\
+"/></div><div id="spr6_39a6fcb8" style="left:350.25px;top:382.5px;"><img id="img3_39a6fcb8" src="data/img87.png" width="780" height="99" alt="بہترین قاری کی آواز میں تلاوت قرآن \
+"/></div></div></div>', '{"s":[]}');})();

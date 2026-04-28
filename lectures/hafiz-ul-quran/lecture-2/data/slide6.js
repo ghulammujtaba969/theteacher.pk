@@ -1,0 +1,2 @@
+(function(){var loadHandler=window['sl_{1D079D56-0650-4F93-BA92-F0073145C93C}'];loadHandler&&loadHandler(5, '<div id="spr0_4a31ef4"><div id="spr1_4a31ef4" class="kern slide"><img id="img1_4a31ef4" src="data/img6.png" width="1280px" height="720px" alt="" style="left:0px;top:0px;"/></div><div id="spr2_4a31ef4" class="kern slide"><div id="spr3_4a31ef4" style="left:145px;top:244px;"><img id="img0_4a31ef4" src="data/img16.png" width="1000" height="283" alt="الف  لام اور اِعراب کے بغیر\
+  اُردو فونٹ میں اَسماء کو پڑھائیں  اور  معنیٰ سمجھیں"/></div></div></div>', '{"s":[]}');})();

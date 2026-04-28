@@ -1,0 +1,2 @@
+(function(){var loadHandler=window['sl_{1D079D56-0650-4F93-BA92-F0073145C93C}'];loadHandler&&loadHandler(11, '<div id="spr0_4a32b48"><div id="spr1_4a32b48" class="kern slide"><img id="img1_4a32b48" src="data/img6.png" width="1280px" height="720px" alt="" style="left:0px;top:0px;"/></div><div id="spr2_4a32b48" class="kern slide"><div id="spr3_4a32b48" style="left:101px;top:214px;"><img id="img0_4a32b48" src="data/img20.png" width="1096" height="334" alt="الف  لام اور اِعراب کے ساتھ   \
+عربی  فونٹ میں اسماء کو دکھائیں   اور سمجھائیں"/></div></div></div>', '{"s":[]}');})();

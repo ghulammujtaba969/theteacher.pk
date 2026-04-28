@@ -1,0 +1,2 @@
+(function(){var loadHandler=window['sl_{6D8069D3-D9AC-49EB-9BB4-5C49067455F0}'];loadHandler&&loadHandler(20, '<div id="spr0_dc2a201"><div id="spr1_dc2a201" class="kern slide"><img id="img1_dc2a201" src="data/img50.jpg" width="960px" height="540px" alt="" style="left:0px;top:0px;"/></div><div id="spr2_dc2a201" class="kern slide"><div id="spr3_dc2a201" style="left:98px;top:150px;"><img id="img0_dc2a201" src="data/img49.png" width="391" height="247" alt="سورہ کوثرتلاوت \
+و بامحاورہ و ترجمہ "/></div></div></div>', '{"s":[]}');})();

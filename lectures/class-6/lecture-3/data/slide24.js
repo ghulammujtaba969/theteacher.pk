@@ -1,0 +1,2 @@
+(function(){var loadHandler=window['sl_{8E129C43-588C-4B65-ABC7-FD3FD17E135F}'];loadHandler&&loadHandler(23, '<div id="spr0_5532f96"><div id="spr1_5532f96" class="kern slide"><img id="img1_5532f96" src="data/img47.jpg" width="960px" height="540px" alt="" style="left:0px;top:0px;"/></div><div id="spr2_5532f96" class="kern slide"><div id="spr3_5532f96" style="left:46px;top:123px;"><img id="img0_5532f96" src="data/img46.png" width="522" height="212" alt="سورہ فاتحہ \
+تلاوت اور  بامحاورہ ترجمہ"/></div></div></div>', '{"s":[]}');})();

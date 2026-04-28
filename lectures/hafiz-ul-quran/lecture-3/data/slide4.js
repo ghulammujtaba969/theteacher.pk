@@ -1,0 +1,2 @@
+(function(){var loadHandler=window['sl_{10732AFE-143E-4B87-AA8C-EB15AF85E3FA}'];loadHandler&&loadHandler(3, '<div id="spr0_4ab5203"><div id="spr1_4ab5203" class="kern slide"><img id="img1_4ab5203" src="data/img5.png" width="1280px" height="720px" alt="" style="left:0px;top:0px;"/></div><div id="spr2_4ab5203" class="kern slide"><div id="spr3_4ab5203" style="left:238px;top:186px;"><img id="img0_4ab5203" src="data/img7.png" width="775" height="434" alt="پارہ اول کے اسماء \
+اردو اور عربی میں ہم معنیٰ اسماء"/></div></div></div>', '{"s":[]}');})();

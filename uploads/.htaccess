@@ -1,0 +1,11 @@
+# Protect uploaded files
+<Files "*">
+    Order Deny,Allow
+    Deny from all
+</Files>
+
+# Allow specific file types
+<FilesMatch "\.(jpg|jpeg|png|gif|pdf|doc|docx|ppt|pptx|mp4|mp3|wav|avi|mov)$">
+    Order Allow,Deny
+    Allow from all
+</FilesMatch>
