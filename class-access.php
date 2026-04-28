@@ -57,8 +57,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     break;
                 }
 
-                // Non-super admins cannot change their own access
-                if ($user_role !== 'super_admin' && (int)$user_id === (int)($current_user['id'] ?? 0)) {
+                // Users cannot change their own class access from this page
+                if ((int)$user_id === (int)($current_user['id'] ?? 0)) {
                     $error = 'You cannot change your own access.';
                     break;
                 }
@@ -172,8 +172,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     break;
                 }
 
-                // Non-super admins cannot revoke their own access
-                if ($user_role !== 'super_admin' && (int)$user_id === (int)($current_user['id'] ?? 0)) {
+                // Users cannot revoke their own class access from this page
+                if ((int)$user_id === (int)($current_user['id'] ?? 0)) {
                     $error = 'You cannot revoke your own access.';
                     break;
                 }
@@ -217,6 +217,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     break;
                 }
 
+                // Users cannot revoke their own 'all classes' access from this page
+                if ((int)$user_id === (int)($current_user['id'] ?? 0)) {
+                    $error = 'You cannot revoke your own access.';
+                    break;
+                }
+
                 // Revoke all classes by updating the user table
                 if ($user->update($user_id, ['can_access_all_classes' => 0])) {
                     // Also clear individual permissions to keep data clean
@@ -253,6 +259,10 @@ if ($user_role === 'super_admin') {
         }
     }
 }
+
+$users_for_dropdown = array_values(array_filter($users_for_dropdown, function ($u_data) use ($current_user) {
+    return (int)($u_data['id'] ?? 0) !== (int)($current_user['id'] ?? 0);
+}));
 
 // Get classes based on current user's permissions for the dropdown
 $classes_for_dropdown = $user->getAccessibleClasses($current_user);
@@ -524,10 +534,17 @@ $paged_permissions = array_slice($all_permissions_for_display, $offset, $per_pag
                                     </span>
                                 </td>
                                 <td>
-                                    <button class="bg-danger-50 text-danger-600 py-2 px-14 rounded-pill hover-bg-danger-600 hover-text-white text-sm" 
-                                            onclick="revokeAccess(<?php echo $perm['user_id']; ?>, <?php echo $perm['class_id']; ?>, '<?php echo htmlspecialchars($perm['username']); ?>', '<?php echo htmlspecialchars($perm['class_name']); ?>')">
-                                        <i class="ph ph-x me-4"></i>Revoke
-                                    </button>
+                                    <?php if ((int)$perm['user_id'] === (int)($current_user['id'] ?? 0)): ?>
+                                        <span class="text-13 py-2 px-8 bg-warning-50 text-warning-600 d-inline-flex align-items-center gap-8 rounded-pill">
+                                            <i class="ph ph-lock"></i>
+                                            Your Access
+                                        </span>
+                                    <?php else: ?>
+                                        <button class="bg-danger-50 text-danger-600 py-2 px-14 rounded-pill hover-bg-danger-600 hover-text-white text-sm" 
+                                                onclick="revokeAccess(<?php echo $perm['user_id']; ?>, <?php echo $perm['class_id']; ?>, '<?php echo htmlspecialchars($perm['username']); ?>', '<?php echo htmlspecialchars($perm['class_name']); ?>')">
+                                            <i class="ph ph-x me-4"></i>Revoke
+                                        </button>
+                                    <?php endif; ?>
                                 </td>
                             </tr>
                             <?php endforeach; ?>
@@ -627,16 +644,23 @@ $paged_permissions = array_slice($all_permissions_for_display, $offset, $per_pag
                         <?php endif; ?>
 
                         <div class="mb-3">
-                            <label for="class_ids" class="form-label">Select Classes</label>
-                            <select class="form-select" name="class_ids[]" id="class_ids" multiple required size="6">
-                                <?php foreach ($classes_for_dropdown as $c): ?>
-                                <option value="<?php echo $c['id']; ?>">
-                                    <?php echo htmlspecialchars($c['class_name']); ?> 
-                                    (<?php echo htmlspecialchars($c['class_code']); ?>)
-                                </option>
-                                <?php endforeach; ?>
-                            </select>
-                            <div class="form-text">Hold Ctrl (Windows) or Cmd (Mac) to select multiple classes</div>
+                            <label for="class_access_search" class="form-label">Select Classes</label>
+                            <div id="class-access-picker" class="class-access-picker">
+                                <input type="text" class="form-control class-access-search mb-12" id="class_access_search" placeholder="Search classes or codes..." oninput="filterClassOptions()">
+                                <div id="class-access-grid" class="class-access-grid">
+                                    <?php foreach ($classes_for_dropdown as $c): ?>
+                                    <label class="class-access-option" data-class-filter="<?php echo htmlspecialchars(strtolower(($c['class_name'] ?? '') . ' ' . ($c['class_code'] ?? ''))); ?>">
+                                        <input class="form-check-input class-access-checkbox" type="checkbox" name="class_ids[]" value="<?php echo $c['id']; ?>" onchange="syncClassOptionState(this)">
+                                        <span>
+                                            <span class="class-access-option-title"><?php echo htmlspecialchars($c['class_name']); ?></span>
+                                            <span class="class-access-option-code"><?php echo htmlspecialchars($c['class_code']); ?></span>
+                                        </span>
+                                    </label>
+                                    <?php endforeach; ?>
+                                </div>
+                                <div id="class-access-empty" class="class-access-empty">No classes match your search.</div>
+                            </div>
+                            <div class="form-text">Choose one or more classes for this user.</div>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -678,6 +702,93 @@ $paged_permissions = array_slice($all_permissions_for_display, $offset, $per_pag
     <!-- main js -->
     <script src="assets/js/main.js"></script>
 
+    <style>
+        .class-access-picker {
+            border: 1px solid #d9e1ec;
+            border-radius: 12px;
+            background: #f8fafc;
+            padding: 16px;
+        }
+
+        .class-access-picker.is-disabled {
+            opacity: 0.65;
+            pointer-events: none;
+        }
+
+        .class-access-search {
+            border-radius: 10px;
+        }
+
+        .class-access-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 12px;
+            max-height: 280px;
+            overflow-y: auto;
+            padding-right: 4px;
+        }
+
+        .class-access-option {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            border: 1px solid #d9e1ec;
+            border-radius: 12px;
+            background: #fff;
+            padding: 14px 16px;
+            cursor: pointer;
+            transition: border-color .2s ease, box-shadow .2s ease, transform .2s ease;
+        }
+
+        .class-access-option:hover {
+            border-color: #4f7cff;
+            box-shadow: 0 8px 18px rgba(79, 124, 255, 0.08);
+            transform: translateY(-1px);
+        }
+
+        .class-access-option input {
+            margin-top: 3px;
+            flex-shrink: 0;
+        }
+
+        .class-access-option.is-selected {
+            border-color: #4f7cff;
+            background: #eef4ff;
+        }
+
+        .class-access-option.is-hidden {
+            display: none;
+        }
+
+        .class-access-option-title {
+            display: block;
+            font-weight: 600;
+            color: #1f2937;
+            line-height: 1.4;
+        }
+
+        .class-access-option-code {
+            display: inline-flex;
+            margin-top: 6px;
+            padding: 4px 10px;
+            border-radius: 999px;
+            background: #eff6ff;
+            color: #2563eb;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .class-access-empty {
+            display: none;
+            border: 1px dashed #d9e1ec;
+            border-radius: 12px;
+            padding: 18px;
+            text-align: center;
+            color: #6b7280;
+            background: #fff;
+        }
+    </style>
+
     <script>
         const currentUserRole = '<?php echo $user_role; ?>';
         const allClasses = <?php echo json_encode($classes_for_dropdown); ?>;
@@ -693,40 +804,29 @@ $paged_permissions = array_slice($all_permissions_for_display, $offset, $per_pag
             
             const assignAllClassesContainer = document.getElementById('assign-all-classes-container');
             const assignAllClassesCheckbox = document.getElementById('assign_all_classes');
-            const classSelect = document.getElementById('class_ids');
 
             // Reset UI elements
-            assignAllClassesContainer.style.display = 'none';
-            assignAllClassesCheckbox.checked = false;
-            classSelect.disabled = false;
-            clearSelect(classSelect);
-
-            // Clear existing options before populating
-            while (classSelect.options.length > 0) {
-                classSelect.remove(0);
+            if (assignAllClassesContainer) {
+                assignAllClassesContainer.style.display = 'none';
             }
-
-            // Populate class select with all available classes from PHP
-            allClasses.forEach(c => {
-                const option = document.createElement('option');
-                option.value = c.id;
-                option.textContent = `${c.class_name} (${c.class_code})`;
-                classSelect.appendChild(option);
-            });
+            if (assignAllClassesCheckbox) {
+                assignAllClassesCheckbox.checked = false;
+            }
+            setClassSelectionDisabled(false);
+            clearClassSelections();
+            resetClassSearch();
 
             // Show 'Assign All Classes' checkbox only for Super Admin
-            if (currentUserRole === 'super_admin') {
+            if (currentUserRole === 'super_admin' && assignAllClassesContainer && assignAllClassesCheckbox) {
                 assignAllClassesContainer.style.display = 'block';
-                // Pre-fill checkbox if target user already has all access
                 assignAllClassesCheckbox.checked = targetUserCanAccessAllClasses;
             }
 
-            // If target user has 'all classes' access, disable individual class selection
             if (targetUserCanAccessAllClasses) {
-                classSelect.disabled = true;
+                setClassSelectionDisabled(true);
             }
 
-            toggleClassSelect(); // Adjust class select state based on checkbox
+            toggleClassSelect();
 
             // Load current individual permissions for the selected user
             if (selectedUserOption) {
@@ -750,14 +850,13 @@ $paged_permissions = array_slice($all_permissions_for_display, $offset, $per_pag
 
         function toggleClassSelect() {
             const assignAllClassesCheckbox = document.getElementById('assign_all_classes');
-            const classSelect = document.getElementById('class_ids');
+            const allowAll = assignAllClassesCheckbox && assignAllClassesCheckbox.checked && currentUserRole === 'super_admin';
 
-            if (assignAllClassesCheckbox.checked && currentUserRole === 'super_admin') {
-                classSelect.disabled = true;
-                clearSelect(classSelect);
+            if (allowAll) {
+                setClassSelectionDisabled(true);
+                clearClassSelections();
             } else {
-                classSelect.disabled = false;
-                // Restore initial selections if available and not assigning all
+                setClassSelectionDisabled(false);
                 const selectedUserOption = document.getElementById('user_id').options[document.getElementById('user_id').selectedIndex];
                 if (selectedUserOption) {
                     preselectClasses(selectedUserOption.value);
@@ -765,22 +864,80 @@ $paged_permissions = array_slice($all_permissions_for_display, $offset, $per_pag
             }
         }
 
-        function clearSelect(selectElement) {
-            Array.from(selectElement.options).forEach(option => {
-                option.selected = false;
+        function getClassCheckboxes() {
+            return Array.from(document.querySelectorAll('.class-access-checkbox'));
+        }
+
+        function clearClassSelections() {
+            getClassCheckboxes().forEach(checkbox => {
+                checkbox.checked = false;
+                syncClassOptionState(checkbox);
             });
         }
 
+        function setClassSelectionDisabled(disabled) {
+            const classPicker = document.getElementById('class-access-picker');
+            const searchInput = document.getElementById('class_access_search');
+
+            getClassCheckboxes().forEach(checkbox => {
+                checkbox.disabled = disabled;
+            });
+
+            if (classPicker) {
+                classPicker.classList.toggle('is-disabled', disabled);
+            }
+
+            if (searchInput) {
+                searchInput.disabled = disabled;
+            }
+        }
+
         function preselectClasses(userId) {
-            const classSelect = document.getElementById('class_ids');
             const userPermissions = initialUserPermissions[userId] || [];
 
-            clearSelect(classSelect);
-            Array.from(classSelect.options).forEach(option => {
-                if (userPermissions.includes(parseInt(option.value))) {
-                    option.selected = true;
+            clearClassSelections();
+            getClassCheckboxes().forEach(checkbox => {
+                if (userPermissions.includes(parseInt(checkbox.value))) {
+                    checkbox.checked = true;
+                    syncClassOptionState(checkbox);
                 }
             });
+        }
+
+        function syncClassOptionState(checkbox) {
+            const optionCard = checkbox.closest('.class-access-option');
+            if (optionCard) {
+                optionCard.classList.toggle('is-selected', checkbox.checked);
+            }
+        }
+
+        function filterClassOptions() {
+            const searchInput = document.getElementById('class_access_search');
+            const query = (searchInput.value || '').trim().toLowerCase();
+            const optionCards = Array.from(document.querySelectorAll('.class-access-option'));
+            let visibleCount = 0;
+
+            optionCards.forEach(card => {
+                const haystack = card.getAttribute('data-class-filter') || '';
+                const isMatch = query === '' || haystack.includes(query);
+                card.classList.toggle('is-hidden', !isMatch);
+                if (isMatch) {
+                    visibleCount += 1;
+                }
+            });
+
+            const emptyState = document.getElementById('class-access-empty');
+            if (emptyState) {
+                emptyState.style.display = visibleCount === 0 ? 'block' : 'none';
+            }
+        }
+
+        function resetClassSearch() {
+            const searchInput = document.getElementById('class_access_search');
+            if (searchInput) {
+                searchInput.value = '';
+            }
+            filterClassOptions();
         }
 
         window.revokeAccess = function(userId, classId, username, className) {

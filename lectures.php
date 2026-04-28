@@ -56,6 +56,15 @@ error_log("LECTURES_DEBUG: Accessible Class IDs: " . implode(',', $accessible_cl
 $action = isset($_GET['action']) ? $_GET['action'] : 'list';
 $lecture_id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 $syllabus_filter = isset($_GET['syllabus']) ? (int)$_GET['syllabus'] : 0;
+$class_filter = isset($_GET['class']) ? (int)$_GET['class'] : 0;
+
+if ($class_filter > 0) {
+    $allowed_ids = $can_access_all_classes_flag ? [] : array_map('intval', $allowed_class_ids_for_listing);
+    if (!$can_access_all_classes_flag && !in_array($class_filter, $allowed_ids, true)) {
+        flash_message('You do not have access to that class.', 'error');
+        redirect('lectures.php');
+    }
+}
 
 // Handle form submissions
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -508,14 +517,21 @@ $flash = get_flash_message();
                         <div class="mb-24 flex-between gap-16 flex-wrap-reverse">
                             <ul class="nav nav-pills common-tab gap-20" id="pills-tab" role="tablist">
                                 <li class="nav-item" role="presentation">
-                                  <button class="nav-link <?php echo !$syllabus_filter ? 'active' : ''; ?>" id="pills-all-tab" onclick="window.location.href='lectures.php'">All Lectures</button>
+                                  <button class="nav-link <?php echo !$syllabus_filter ? 'active' : ''; ?>" id="pills-all-tab" onclick="window.location.href='<?php echo $class_filter > 0 ? 'lectures.php?class=' . $class_filter : 'lectures.php'; ?>'">All Lectures</button>
                                 </li>
                                 <?php
                                 $syllabi_stmt = $lecture->getActiveSyllabi($can_access_all_classes_flag ? [] : $accessible_class_ids);
                                 while ($syllabus_row = $syllabi_stmt->fetch()) {
+                                    if ($class_filter > 0 && (int)$syllabus_row['class_id'] !== $class_filter) {
+                                        continue;
+                                    }
                                     $active_class = ($syllabus_filter == $syllabus_row['id']) ? 'active' : '';
+                                    $syllabus_url = 'lectures.php?syllabus=' . $syllabus_row['id'];
+                                    if ($class_filter > 0) {
+                                        $syllabus_url .= '&class=' . $class_filter;
+                                    }
                                     echo '<li class="nav-item" role="presentation">';
-                                    echo '<button class="nav-link ' . $active_class . '" onclick="window.location.href=\'lectures.php?syllabus=' . $syllabus_row['id'] . '\'">';
+                                    echo '<button class="nav-link ' . $active_class . '" onclick="window.location.href=\'' . $syllabus_url . '\'">';
                                     echo htmlspecialchars($syllabus_row['syllabus_title']);
                                     echo '</button>';
                                     echo '</li>';
@@ -543,6 +559,9 @@ $flash = get_flash_message();
                                     if ($stmt->rowCount() > 0) {
                                         
                                         while ($row = $stmt->fetch()) {
+                                            if ($class_filter > 0 && (int)$row['class_id'] !== $class_filter) {
+                                                continue;
+                                            }
                                             $type_class = 'type-' . $row['lecture_type'];
                                             $type_color = '';
                                             $type_icon = '';

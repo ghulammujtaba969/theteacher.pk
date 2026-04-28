@@ -67,7 +67,7 @@ if (in_array($user_role, ['super_admin', 'organization_admin', 'school_admin']))
                     </a>
                 </li>
 
-                <?php if (in_array($user_role, ['super_admin', 'organization_admin', 'school_admin', 'teacher'])): ?>
+                <?php if ($user_role === 'super_admin'): ?>
                     <!-- Classes Menu -->
                     <li class="sidebar-menu__item has-dropdown <?php echo ($current_page == 'classes' || $current_page == 'subjects' || $current_page == 'syllabi') ? 'activePage' : ''; ?>">
                         <a href="javascript:void(0)" class="sidebar-menu__link">
@@ -283,7 +283,7 @@ if (in_array($user_role, ['super_admin', 'organization_admin', 'school_admin']))
                 </li>
 
 
-                <?php if (in_array($user_role, ['super_admin', 'organization_admin', 'school_admin', '', ''])): ?>
+                <?php if ($user_role === 'super_admin'): ?>
                     <li class="sidebar-menu__item">
                         <a href="profile.php" class="sidebar-menu__link">
                             <span class="icon"><i class="ph ph-gear"></i></span>

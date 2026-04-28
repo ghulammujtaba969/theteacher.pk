@@ -13,7 +13,7 @@ class School {
             $query = "INSERT INTO schools (organization_id, name, description, address, phone, email, status) 
                      VALUES (?, ?, ?, ?, ?, ?, ?)";
             $stmt = $this->db->prepare($query);
-            return $stmt->execute([
+            if ($stmt->execute([
                 $data['organization_id'],
                 $data['name'],
                 $data['description'],
@@ -21,7 +21,10 @@ class School {
                 $data['phone'],
                 $data['email'],
                 $data['status'] ?? 'active'
-            ]);
+            ])) {
+                return $this->db->lastInsertId();
+            }
+            return false;
         } catch (PDOException $e) {
             error_log("Error creating school: " . $e->getMessage());
             return false;
@@ -32,7 +35,31 @@ class School {
         try {
             if ($organization_id) {
                 $query = "SELECT s.*, o.name as organization_name,
-                         (SELECT COUNT(*) FROM users WHERE school_id = s.id) as user_count
+                         (SELECT COUNT(*) FROM users WHERE school_id = s.id) as user_count,
+                         (SELECT u.id FROM users u 
+                          WHERE u.school_id = s.id 
+                          AND u.role_id = (SELECT id FROM roles WHERE name = 'School Admin' LIMIT 1)
+                          LIMIT 1) as admin_user_id,
+                         (SELECT u.username FROM users u 
+                          WHERE u.school_id = s.id 
+                          AND u.role_id = (SELECT id FROM roles WHERE name = 'School Admin' LIMIT 1)
+                          LIMIT 1) as admin_username,
+                         (SELECT u.email FROM users u 
+                          WHERE u.school_id = s.id 
+                          AND u.role_id = (SELECT id FROM roles WHERE name = 'School Admin' LIMIT 1)
+                          LIMIT 1) as admin_email,
+                         (SELECT u.full_name FROM users u 
+                          WHERE u.school_id = s.id 
+                          AND u.role_id = (SELECT id FROM roles WHERE name = 'School Admin' LIMIT 1)
+                          LIMIT 1) as admin_full_name,
+                         (SELECT GROUP_CONCAT(ucp.class_id) 
+                          FROM user_class_permissions ucp
+                          WHERE ucp.user_id = (
+                              SELECT u.id FROM users u 
+                              WHERE u.school_id = s.id 
+                              AND u.role_id = (SELECT id FROM roles WHERE name = 'School Admin' LIMIT 1)
+                              LIMIT 1
+                          )) as admin_class_ids
                          FROM schools s 
                          JOIN organizations o ON s.organization_id = o.id 
                          WHERE s.organization_id = ?
@@ -41,7 +68,31 @@ class School {
                 $stmt->execute([$organization_id]);
             } else {
                 $query = "SELECT s.*, o.name as organization_name,
-                         (SELECT COUNT(*) FROM users WHERE school_id = s.id) as user_count
+                         (SELECT COUNT(*) FROM users WHERE school_id = s.id) as user_count,
+                         (SELECT u.id FROM users u 
+                          WHERE u.school_id = s.id 
+                          AND u.role_id = (SELECT id FROM roles WHERE name = 'School Admin' LIMIT 1)
+                          LIMIT 1) as admin_user_id,
+                         (SELECT u.username FROM users u 
+                          WHERE u.school_id = s.id 
+                          AND u.role_id = (SELECT id FROM roles WHERE name = 'School Admin' LIMIT 1)
+                          LIMIT 1) as admin_username,
+                         (SELECT u.email FROM users u 
+                          WHERE u.school_id = s.id 
+                          AND u.role_id = (SELECT id FROM roles WHERE name = 'School Admin' LIMIT 1)
+                          LIMIT 1) as admin_email,
+                         (SELECT u.full_name FROM users u 
+                          WHERE u.school_id = s.id 
+                          AND u.role_id = (SELECT id FROM roles WHERE name = 'School Admin' LIMIT 1)
+                          LIMIT 1) as admin_full_name,
+                         (SELECT GROUP_CONCAT(ucp.class_id) 
+                          FROM user_class_permissions ucp
+                          WHERE ucp.user_id = (
+                              SELECT u.id FROM users u 
+                              WHERE u.school_id = s.id 
+                              AND u.role_id = (SELECT id FROM roles WHERE name = 'School Admin' LIMIT 1)
+                              LIMIT 1
+                          )) as admin_class_ids
                          FROM schools s 
                          JOIN organizations o ON s.organization_id = o.id 
                          ORDER BY o.name, s.name";
@@ -57,7 +108,31 @@ class School {
     
     public function getById($id) {
         try {
-            $query = "SELECT s.*, o.name as organization_name 
+            $query = "SELECT s.*, o.name as organization_name,
+                     (SELECT u.id FROM users u 
+                      WHERE u.school_id = s.id 
+                      AND u.role_id = (SELECT id FROM roles WHERE name = 'School Admin' LIMIT 1)
+                      LIMIT 1) as admin_user_id,
+                     (SELECT u.username FROM users u 
+                      WHERE u.school_id = s.id 
+                      AND u.role_id = (SELECT id FROM roles WHERE name = 'School Admin' LIMIT 1)
+                      LIMIT 1) as admin_username,
+                     (SELECT u.email FROM users u 
+                      WHERE u.school_id = s.id 
+                      AND u.role_id = (SELECT id FROM roles WHERE name = 'School Admin' LIMIT 1)
+                      LIMIT 1) as admin_email,
+                     (SELECT u.full_name FROM users u 
+                      WHERE u.school_id = s.id 
+                      AND u.role_id = (SELECT id FROM roles WHERE name = 'School Admin' LIMIT 1)
+                      LIMIT 1) as admin_full_name,
+                     (SELECT GROUP_CONCAT(ucp.class_id) 
+                      FROM user_class_permissions ucp
+                      WHERE ucp.user_id = (
+                          SELECT u.id FROM users u 
+                          WHERE u.school_id = s.id 
+                          AND u.role_id = (SELECT id FROM roles WHERE name = 'School Admin' LIMIT 1)
+                          LIMIT 1
+                      )) as admin_class_ids
                      FROM schools s 
                      JOIN organizations o ON s.organization_id = o.id 
                      WHERE s.id = ?";

@@ -214,39 +214,6 @@
         </div>
         <!-- Teaching Activities End -->
         
-        <!-- Progress Bar Start -->
-        <?php if (isset($stats['radial_chart_data'])): ?>
-        <div class="card mt-24">
-            <div class="card-header border-bottom border-gray-100">
-                <h5 class="mb-0">My Content Overview</h5>
-            </div>
-            <div class="card-body">
-               <div id="radialMultipleBar"></div>
-
-               <div class="">
-                    <h6 class="text-lg mb-16 text-center"> <span class="text-gray-400">Total Content:</span> <?php echo $stats['radial_chart_data']['total']; ?> items</h6>
-                    <div class="flex-between gap-8 flex-wrap">
-                        <div class="flex-align flex-column">
-                            <h6 class="mb-6"><?php echo $stats['classes']; ?></h6>
-                            <span class="w-30 h-3 rounded-pill bg-main-600"></span>
-                            <span class="text-13 mt-6 text-gray-600">Classes</span>
-                        </div>
-                        <div class="flex-align flex-column">
-                            <h6 class="mb-6"><?php echo $stats['subjects']; ?></h6>
-                            <span class="w-30 h-3 rounded-pill bg-main-two-600"></span>
-                            <span class="text-13 mt-6 text-gray-600">Subjects</span>
-                        </div>
-                        <div class="flex-align flex-column">
-                            <h6 class="mb-6"><?php echo $stats['lectures']; ?></h6>
-                            <span class="w-30 h-3 rounded-pill bg-gray-500"></span>
-                            <span class="text-13 mt-6 text-gray-600">Lectures</span>
-                        </div>
-                    </div>
-               </div>
-            </div>
-        </div>
-        <?php endif; ?>
-        <!-- Progress bar end -->
     </div>
 
 </div>

@@ -1,6 +1,7 @@
 <?php
 class Database {
     private $host = DB_HOST;
+    private $port = DB_PORT;
     private $db_name = DB_NAME;
     private $username = DB_USER;
     private $password = DB_PASS;
@@ -16,7 +17,7 @@ class Database {
         
         try {
             $this->conn = new PDO(
-                "mysql:host=" . $this->host . ";dbname=" . $this->db_name,
+                "mysql:host=" . $this->host . ";port=" . $this->port . ";dbname=" . $this->db_name,
                 $this->username,
                 $this->password
             );

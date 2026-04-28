@@ -2,17 +2,19 @@
 // Application configuration
 define('APP_NAME', 'Syllabus Management System');
 define('APP_VERSION', '1.0.0');
-define('BASE_URL', 'https://theteacher.pk/');
-// define('BASE_URL', 'http://127.0.0.1/theteacher.pk/latest/');
+// define('BASE_URL', 'https://theteacher.pk/');
+define('BASE_URL', 'http://127.0.0.1/theteacher.pk(backup)/2026-04-28/');
 
 // Database configuration
+// define('DB_HOST', 'localhost');
+// define('DB_NAME', 'u921830511_teacherpk');
+// define('DB_USER', 'u921830511_teacherpk_user');
+// define('DB_PASS', '0Hwmc!c5p;');
 define('DB_HOST', 'localhost');
+define('DB_PORT', '3307');
 define('DB_NAME', 'u921830511_teacherpk');
-define('DB_USER', 'u921830511_teacherpk_user');
-define('DB_PASS', '0Hwmc!c5p;');
-// define('DB_NAME', 'syllabus_management');
-// define('DB_USER', 'root');
-// define('DB_PASS', '');
+define('DB_USER', 'root');
+define('DB_PASS', '');
 
 // File upload configuration
 define('UPLOAD_DIR', 'uploads/');
