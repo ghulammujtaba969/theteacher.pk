@@ -1,0 +1,2 @@
+(function(){var loadHandler=window['sl_{758EC45B-2187-481D-9004-7515D992006A}'];loadHandler&&loadHandler(21, '<div id="spr0_da823b8"><div id="spr1_da823b8" class="kern slide"><img id="img1_da823b8" src="data/img55.jpg" width="960px" height="540px" alt="" style="left:0px;top:0px;"/></div><div id="spr2_da823b8" class="kern slide"><div id="spr3_da823b8" style="left:48px;top:163px;"><img id="img0_da823b8" src="data/img54.png" width="492" height="234" alt="سورۃ الماعون تلاوت \
+و بامحاورہ و ترجمہ "/></div></div></div>', '{"s":[]}');})();

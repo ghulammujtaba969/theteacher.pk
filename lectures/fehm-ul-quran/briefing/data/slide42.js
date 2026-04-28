@@ -1,0 +1,3 @@
+(function(){var loadHandler=window['sl_{82431C43-8D86-4F23-ADF3-817FDCEF32E4}'];loadHandler&&loadHandler(41, '<div id="spr0_39a6ea2a"><div id="spr1_39a6ea2a" class="kern slide"><img id="img2_39a6ea2a" src="data/img1.png" width="1280px" height="720px" alt="" style="left:0px;top:0px;"/></div><div id="spr2_39a6ea2a" class="kern slide"><div id="spr3_39a6ea2a" style="left:278.25px;top:84px;"><img id="img0_39a6ea2a" src="data/img75.png" width="936.75" height="120.75" alt="4۔ عربی  گرائمر کی ملٹی میڈیا کے ذریعےتدریس\
+"/></div><div id="spr4_39a6ea2a" style="left:323.25px;top:308.25px;"><img id="img1_39a6ea2a" src="data/img76.png" width="761.25" height="96" alt="ماضی ،مضارع، امر  اور نہی کی تدریس \
+"/></div></div></div>', '{"s":[]}');})();

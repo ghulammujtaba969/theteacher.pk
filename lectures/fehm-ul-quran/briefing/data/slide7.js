@@ -1,0 +1,2 @@
+(function(){var loadHandler=window['sl_{82431C43-8D86-4F23-ADF3-817FDCEF32E4}'];loadHandler&&loadHandler(6, '<div id="spr0_39a69090"><div id="spr1_39a69090" class="kern slide"><img id="img1_39a69090" src="data/img1.png" width="1280px" height="720px" alt="" style="left:0px;top:0px;"/></div><div id="spr2_39a69090" class="kern slide"><div id="spr3_39a69090" style="left:315.75px;top:234.75px;"><img id="img0_39a69090" src="data/img13.png" width="699" height="216" alt="پارہ اول کے اسماء \
+"/></div></div></div>', '{"s":[]}');})();
