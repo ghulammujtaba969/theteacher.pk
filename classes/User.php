@@ -158,6 +158,17 @@ class User {
             return false;
         }
     }
+
+    public function clearClassPermissions($user_id) {
+        try {
+            $query = "DELETE FROM user_class_permissions WHERE user_id = ?";
+            $stmt = $this->db->prepare($query);
+            return $stmt->execute([$user_id]);
+        } catch (PDOException $e) {
+            error_log("PDOException in User->clearClassPermissions: " . $e->getMessage());
+            return false;
+        }
+    }
     
     public function getUsersByPermission($current_user) {
         try {

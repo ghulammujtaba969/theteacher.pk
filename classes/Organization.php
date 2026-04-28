@@ -13,14 +13,17 @@ class Organization {
             $query = "INSERT INTO organizations (name, description, address, phone, email, status) 
                      VALUES (?, ?, ?, ?, ?, ?)";
             $stmt = $this->db->prepare($query);
-            return $stmt->execute([
+            if ($stmt->execute([
                 $data['name'],
                 $data['description'],
                 $data['address'],
                 $data['phone'],
                 $data['email'],
                 $data['status'] ?? 'active'
-            ]);
+            ])) {
+                return $this->db->lastInsertId();
+            }
+            return false;
         } catch (PDOException $e) {
             error_log("Error creating organization: " . $e->getMessage());
             return false;
@@ -31,8 +34,15 @@ class Organization {
         try {
             $query = "SELECT o.*, 
                      (SELECT COUNT(*) FROM schools WHERE organization_id = o.id) as school_count,
-                     (SELECT COUNT(*) FROM users WHERE organization_id = o.id) as user_count
+                     (SELECT COUNT(*) FROM users WHERE organization_id = o.id) as user_count,
+                     u.id as admin_user_id,
+                     u.username as admin_username,
+                     u.email as admin_email,
+                     u.full_name as admin_full_name,
+                     (SELECT GROUP_CONCAT(class_id) FROM user_class_permissions WHERE user_id = u.id) as admin_class_ids
                      FROM organizations o 
+                     LEFT JOIN users u ON u.organization_id = o.id AND u.role_id = (SELECT id FROM roles WHERE name = 'Organization Admin' LIMIT 1)
+                     GROUP BY o.id
                      ORDER BY o.name";
             $stmt = $this->db->prepare($query);
             $stmt->execute();
