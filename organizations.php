@@ -67,9 +67,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             }
                         }
                     }
-                    set_flash_message('Organization created successfully!', 'success');
+                    flash_message('Organization created successfully!', 'success');
                 } else {
-                    set_flash_message('Failed to create organization. Please try again.', 'error');
+                    flash_message('Failed to create organization. Please try again.', 'error');
                 }
                 redirect('organizations.php');
                 break;
@@ -133,9 +133,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             }
                         }
                     }
-                    set_flash_message('Organization updated successfully!', 'success');
+                    flash_message('Organization updated successfully!', 'success');
                 } else {
-                    set_flash_message('Failed to update organization. Please try again.', 'error');
+                    flash_message('Failed to update organization. Please try again.', 'error');
                 }
                 redirect('organizations.php');
                 break;
@@ -143,9 +143,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             case 'delete':
                 $org_id = $_POST['org_id'];
                 if ($organization->delete($org_id)) {
-                    set_flash_message('Organization deleted successfully!', 'success');
+                    flash_message('Organization deleted successfully!', 'success');
                 } else {
-                    set_flash_message('Failed to delete organization. Please try again.', 'error');
+                    flash_message('Failed to delete organization. Please try again.', 'error');
                 }
                 redirect('organizations.php');
                 break;

@@ -19,10 +19,11 @@ function getPDO() {
         require_once __DIR__.'/config.php';
     }
     $host = defined('DB_HOST') ? DB_HOST : '127.0.0.1';
+    $port = defined('DB_PORT') ? DB_PORT : '3307';
     $db   = defined('DB_NAME') ? DB_NAME : 'u921830511_syllabusms';
     $user = defined('DB_USER') ? DB_USER : 'root';
     $pass = defined('DB_PASS') ? DB_PASS : '';
-    $dsn  = "mysql:host={$host};dbname={$db};charset=utf8mb4";
+    $dsn  = "mysql:host={$host};port={$port};dbname={$db};charset=utf8mb4";
     try {
         $pdo = new PDO($dsn, $user, $pass, [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
         return $pdo;

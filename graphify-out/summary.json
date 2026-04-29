@@ -1,0 +1,116 @@
+{
+  "nodes": 8674,
+  "edges": 46159,
+  "communities": 819,
+  "god_nodes": [
+    {
+      "id": "player_m",
+      "label": "M()",
+      "degree": 235
+    },
+    {
+      "id": "player_b",
+      "label": "$b()",
+      "degree": 229
+    },
+    {
+      "id": "player_z",
+      "label": "$z()",
+      "degree": 164
+    },
+    {
+      "id": "player_t",
+      "label": "t()",
+      "degree": 145
+    },
+    {
+      "id": "player_rw",
+      "label": "rw",
+      "degree": 129
+    }
+  ],
+  "surprises": [
+    {
+      "source": "$E()",
+      "target": "_()",
+      "source_files": [
+        "D:\\xampp8.2\\htdocs\\theteacher.pk(backup)\\2026-04-28\\lectures\\hafiz-ul-quran\\lecture-9\\data\\player.js",
+        "D:\\xampp8.2\\htdocs\\theteacher.pk(backup)\\2026-04-28\\assets\\js\\jquery-ui.js"
+      ],
+      "confidence": "INFERRED",
+      "relation": "calls",
+      "why": "inferred connection - not explicitly stated in source; connects across different repos/directories; bridges separate communities; peripheral node `_()` unexpectedly reaches hub `$E()`"
+    },
+    {
+      "source": "s()",
+      "target": "t()",
+      "source_files": [
+        "D:\\xampp8.2\\htdocs\\theteacher.pk(backup)\\2026-04-28\\assets\\js\\boostrap.bundle.min.js",
+        "D:\\xampp8.2\\htdocs\\theteacher.pk(backup)\\2026-04-28\\lectures\\hafiz-ul-quran\\lecture-9\\data\\player.js"
+      ],
+      "confidence": "INFERRED",
+      "relation": "calls",
+      "why": "inferred connection - not explicitly stated in source; connects across different repos/directories; bridges separate communities"
+    },
+    {
+      "source": "m()",
+      "target": "e()",
+      "source_files": [
+        "D:\\xampp8.2\\htdocs\\theteacher.pk(backup)\\2026-04-28\\assets\\js\\boostrap.bundle.min.js",
+        "D:\\xampp8.2\\htdocs\\theteacher.pk(backup)\\2026-04-28\\lectures\\hafiz-ul-quran\\lecture-9\\data\\browsersupport.js"
+      ],
+      "confidence": "INFERRED",
+      "relation": "calls",
+      "why": "inferred connection - not explicitly stated in source; connects across different repos/directories; bridges separate communities"
+    },
+    {
+      "source": "g()",
+      "target": "t()",
+      "source_files": [
+        "D:\\xampp8.2\\htdocs\\theteacher.pk(backup)\\2026-04-28\\assets\\js\\boostrap.bundle.min.js",
+        "D:\\xampp8.2\\htdocs\\theteacher.pk(backup)\\2026-04-28\\lectures\\hafiz-ul-quran\\lecture-9\\data\\player.js"
+      ],
+      "confidence": "INFERRED",
+      "relation": "calls",
+      "why": "inferred connection - not explicitly stated in source; connects across different repos/directories; bridges separate communities"
+    },
+    {
+      "source": "mi()",
+      "target": "t()",
+      "source_files": [
+        "D:\\xampp8.2\\htdocs\\theteacher.pk(backup)\\2026-04-28\\assets\\js\\boostrap.bundle.min.js",
+        "D:\\xampp8.2\\htdocs\\theteacher.pk(backup)\\2026-04-28\\lectures\\hafiz-ul-quran\\lecture-9\\data\\player.js"
+      ],
+      "confidence": "INFERRED",
+      "relation": "calls",
+      "why": "inferred connection - not explicitly stated in source; connects across different repos/directories; bridges separate communities"
+    }
+  ],
+  "questions": [
+    {
+      "type": "bridge_node",
+      "question": "Why does `t()` connect `Community 5` to `Community 0`, `Community 1`, `Community 2`, `Community 3`, `Community 4`, `Community 11`, `Community 13`, `Community 15`?",
+      "why": "High betweenness centrality (0.029) - this node is a cross-community bridge."
+    },
+    {
+      "type": "bridge_node",
+      "question": "Why does `an()` connect `Community 3` to `Community 0`, `Community 1`, `Community 2`, `Community 4`, `Community 6`, `Community 11`?",
+      "why": "High betweenness centrality (0.022) - this node is a cross-community bridge."
+    },
+    {
+      "type": "verify_inferred",
+      "question": "Are the 61 inferred relationships involving `$b()` (e.g. with `ia()` and `cb()`) actually correct?",
+      "why": "`$b()` has 61 INFERRED edges - model-reasoned connections that need verification."
+    },
+    {
+      "type": "verify_inferred",
+      "question": "Are the 44 inferred relationships involving `t()` (e.g. with `g()` and `s()`) actually correct?",
+      "why": "`t()` has 44 INFERRED edges - model-reasoned connections that need verification."
+    },
+    {
+      "type": "low_cohesion",
+      "question": "Should `Community 0` be split into smaller, more focused modules?",
+      "why": "Cohesion score 0.0 - nodes in this community are weakly interconnected."
+    }
+  ]
+}

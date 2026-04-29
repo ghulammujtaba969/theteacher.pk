@@ -22,46 +22,6 @@
         </div>
         <!-- Widgets End -->
 
-        <!-- School Activity Chart Start -->
-        <div class="card mt-24">
-            <div class="card-body">
-                <div class="mb-20 flex-between flex-wrap gap-8">
-                    <h4 class="mb-0">School Activity Statistics</h4>
-                    <div class="flex-align gap-16 flex-wrap">
-                        <div class="flex-align flex-wrap gap-16">
-                            <?php if (isset($stats['activity_stats']['series'])): ?>
-                                <?php foreach ($stats['activity_stats']['series'] as $index => $series): ?>
-                                    <div class="flex-align flex-wrap gap-8">
-                                        <span class="w-8 h-8 rounded-circle <?php echo $index === 0 ? 'bg-main-600' : 'bg-main-two-600'; ?>"></span>
-                                        <span class="text-13 text-gray-600"><?php echo htmlspecialchars($series['name']); ?></span>
-                                    </div>
-                                <?php endforeach; ?>
-                            <?php else: ?>
-                                <div class="flex-align flex-wrap gap-8">
-                                    <span class="w-8 h-8 rounded-circle bg-main-600"></span>
-                                    <span class="text-13 text-gray-600">Classes</span>
-                                </div>
-                                <div class="flex-align flex-wrap gap-8">
-                                    <span class="w-8 h-8 rounded-circle bg-main-two-600"></span>
-                                    <span class="text-13 text-gray-600">Lectures</span>
-                                </div>
-                            <?php endif; ?>
-                        </div>
-                        <select class="form-select form-control text-13 px-8 pe-24 py-8 rounded-8 w-auto">
-                            <option value="1">Yearly</option>
-                            <option value="1">Monthly</option>
-                            <option value="1">Weekly</option>
-                            <option value="1">Today</option>
-                        </select>
-                    </div>
-                </div>
-                
-                <div id="doubleLineChart" class="tooltip-style y-value-left"></div>
-                
-            </div>
-        </div>
-        <!-- School Activity Chart End -->
-
         <!-- School Users Start -->
         <div class="card mt-24">
             <div class="card-body">
@@ -217,37 +177,6 @@
         </div>
         <!-- School Activities End -->
         
-        <!-- Progress Bar Start -->
-        <div class="card mt-24">
-            <div class="card-header border-bottom border-gray-100">
-                <h5 class="mb-0">Content Overview</h5>
-            </div>
-            <div class="card-body">
-               <div id="radialMultipleBar"></div>
-
-               <div class="">
-                    <h6 class="text-lg mb-16 text-center"> <span class="text-gray-400">Total Content:</span> <?php echo $stats['radial_chart_data']['total']; ?> items</h6>
-                    <div class="flex-between gap-8 flex-wrap">
-                        <div class="flex-align flex-column">
-                            <h6 class="mb-6"><?php echo $stats['classes']; ?></h6>
-                            <span class="w-30 h-3 rounded-pill bg-main-600"></span>
-                            <span class="text-13 mt-6 text-gray-600">Classes</span>
-                        </div>
-                        <div class="flex-align flex-column">
-                            <h6 class="mb-6"><?php echo $stats['subjects']; ?></h6>
-                            <span class="w-30 h-3 rounded-pill bg-main-two-600"></span>
-                            <span class="text-13 mt-6 text-gray-600">Subjects</span>
-                        </div>
-                        <div class="flex-align flex-column">
-                            <h6 class="mb-6"><?php echo $stats['lectures']; ?></h6>
-                            <span class="w-30 h-3 rounded-pill bg-gray-500"></span>
-                            <span class="text-13 mt-6 text-gray-600">Lectures</span>
-                        </div>
-                    </div>
-               </div>
-            </div>
-        </div>
-        <!-- Progress bar end -->
     </div>
 
 </div>

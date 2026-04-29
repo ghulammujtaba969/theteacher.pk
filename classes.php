@@ -330,6 +330,8 @@ $flash = get_flash_message();
                                             if ($user_role === 'super_admin') {
                                                 echo "<a href='classes.php?action=edit&id=" . $row['id'] . "' class='btn btn-outline-main rounded-pill py-6 px-12 text-13'>Edit</a>";
                                                 echo "<button type='button' class='btn btn-danger rounded-pill py-6 px-12 text-13' onclick='confirmDelete(" . $row['id'] . ", \"" . htmlspecialchars($row['class_name']) . "\")'>Delete</button>";
+                                            } elseif (in_array($user_role, ['organization_admin', 'school_admin', 'teacher'], true)) {
+                                                echo "<a href='lectures.php?class=" . $row['id'] . "' class='btn btn-outline-main rounded-pill py-6 px-12 text-13'>View Lectures</a>";
                                             } else {
                                                 echo "<a href='subjects.php?class=" . $row['id'] . "' class='btn btn-outline-main rounded-pill py-6 px-12 text-13'>View Subjects</a>";
                                             }

@@ -3,6 +3,9 @@ require_once 'config/config.php';
 require_once 'includes/functions.php';
 require_once 'classes/School.php';
 require_once 'classes/Organization.php';
+require_once 'classes/User.php';
+require_once 'classes/ClassModel.php';
+require_once 'classes/Role.php';
 
 // Check if user is logged in and has permission to manage schools
 $current_user = current_user();
@@ -16,13 +19,42 @@ $database = new Database();
 $db = $database->getConnection();
 $school = new School($db);
 $organization = new Organization($db);
+$user_obj = new User($db);
+$class_obj = new ClassModel($db);
+$role_obj = new Role($db);
+$accessible_classes_raw = $user_obj->getAccessibleClasses($current_user);
+$accessible_class_ids = array_column($accessible_classes_raw, 'id');
+$can_access_all_classes_flag = ($current_user['can_access_all_classes'] ?? 0) == 1;
 
-$message = '';
-$error = '';
+if ($user_role === 'super_admin') {
+    $classes = $class_obj->readAll([], true);
+} else {
+    $classes = $class_obj->readAll(
+        $can_access_all_classes_flag ? [] : $accessible_class_ids,
+        $can_access_all_classes_flag
+    );
+}
+$allowed_assignable_class_ids = array_map('intval', array_column($classes, 'id'));
+$roles = $role_obj->getAll();
+$school_admin_role_id = 0;
+foreach ($roles as $r) {
+    if ($r['name'] === 'School Admin') {
+        $school_admin_role_id = $r['id'];
+        break;
+    }
+}
 
 // Handle form submissions
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['action'])) {
+        $selected_class_ids = [];
+        if (!empty($_POST['class_ids']) && is_array($_POST['class_ids'])) {
+            $selected_class_ids = array_values(array_intersect(
+                array_map('intval', $_POST['class_ids']),
+                $allowed_assignable_class_ids
+            ));
+        }
+
         switch ($_POST['action']) {
             case 'create':
                 $data = [
@@ -37,14 +69,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 
                 // Organization Admin can only create schools in their organization
                 if ($user_role === 'organization_admin' && $data['organization_id'] != $current_user['organization_id']) {
-                    $error = 'You can only create schools in your organization.';
+                    flash_message('You can only create schools in your organization.', 'error');
                 } else {
-                    if ($school->create($data)) {
-                        $message = 'School created successfully!';
+                    $new_school_id = $school->create($data);
+                    if ($new_school_id) {
+                        if (!empty($_POST['create_admin']) && $_POST['create_admin'] == '1') {
+                            $admin_data = [
+                                'username' => trim($_POST['admin_username']),
+                                'email' => trim($_POST['admin_email']),
+                                'full_name' => trim($_POST['admin_full_name']),
+                                'password' => $_POST['admin_password'],
+                                'role_id' => $school_admin_role_id,
+                                'organization_id' => $data['organization_id'],
+                                'school_id' => $new_school_id,
+                                'status' => 'active'
+                            ];
+
+                            $new_user_id = $user_obj->create($admin_data, $current_user['id']);
+                            if ($new_user_id && !empty($selected_class_ids)) {
+                                foreach ($selected_class_ids as $class_id) {
+                                    $user_obj->assignClassPermission($new_user_id, $class_id, $current_user['id']);
+                                }
+                            }
+                        }
+                        flash_message('School created successfully!', 'success');
                     } else {
-                        $error = 'Failed to create school. Please try again.';
+                        flash_message('Failed to create school. Please try again.', 'error');
                     }
                 }
+                redirect('schools.php');
                 break;
                 
             case 'update':
@@ -61,14 +114,59 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 
                 // Organization Admin can only update schools in their organization
                 if ($user_role === 'organization_admin' && $data['organization_id'] != $current_user['organization_id']) {
-                    $error = 'You can only update schools in your organization.';
+                    flash_message('You can only update schools in your organization.', 'error');
                 } else {
                     if ($school->update($school_id, $data)) {
-                        $message = 'School updated successfully!';
+                        $admin_user_id = !empty($_POST['admin_user_id']) ? $_POST['admin_user_id'] : null;
+
+                        if ($admin_user_id) {
+                            $admin_data = [
+                                'username' => trim($_POST['admin_username']),
+                                'email' => trim($_POST['admin_email']),
+                                'full_name' => trim($_POST['admin_full_name']),
+                                'role_id' => $school_admin_role_id,
+                                'organization_id' => $data['organization_id'],
+                                'school_id' => $school_id,
+                                'status' => 'active'
+                            ];
+
+                            $user_obj->update($admin_user_id, $admin_data);
+
+                            if (!empty($_POST['admin_password'])) {
+                                $user_obj->updatePassword($admin_user_id, $_POST['admin_password']);
+                            }
+
+                            $user_obj->clearClassPermissions($admin_user_id);
+                            if (!empty($selected_class_ids)) {
+                                foreach ($selected_class_ids as $class_id) {
+                                    $user_obj->assignClassPermission($admin_user_id, $class_id, $current_user['id']);
+                                }
+                            }
+                        } elseif (!empty($_POST['create_admin']) && $_POST['create_admin'] == '1') {
+                            $admin_data = [
+                                'username' => trim($_POST['admin_username']),
+                                'email' => trim($_POST['admin_email']),
+                                'full_name' => trim($_POST['admin_full_name']),
+                                'password' => $_POST['admin_password'],
+                                'role_id' => $school_admin_role_id,
+                                'organization_id' => $data['organization_id'],
+                                'school_id' => $school_id,
+                                'status' => 'active'
+                            ];
+
+                            $new_user_id = $user_obj->create($admin_data, $current_user['id']);
+                            if ($new_user_id && !empty($selected_class_ids)) {
+                                foreach ($selected_class_ids as $class_id) {
+                                    $user_obj->assignClassPermission($new_user_id, $class_id, $current_user['id']);
+                                }
+                            }
+                        }
+                        flash_message('School updated successfully!', 'success');
                     } else {
-                        $error = 'Failed to update school. Please try again.';
+                        flash_message('Failed to update school. Please try again.', 'error');
                     }
                 }
+                redirect('schools.php');
                 break;
                 
             case 'delete':
@@ -77,14 +175,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 
                 // Organization Admin can only delete schools in their organization
                 if ($user_role === 'organization_admin' && $school_data['organization_id'] != $current_user['organization_id']) {
-                    $error = 'You can only delete schools in your organization.';
+                    flash_message('You can only delete schools in your organization.', 'error');
                 } else {
                     if ($school->delete($school_id)) {
-                        $message = 'School deleted successfully!';
+                        flash_message('School deleted successfully!', 'success');
                     } else {
-                        $error = 'Failed to delete school. Please try again.';
+                        flash_message('Failed to delete school. Please try again.', 'error');
                     }
                 }
+                redirect('schools.php');
                 break;
         }
     }
@@ -279,22 +378,6 @@ $flash = get_flash_message();
                 </div>
             <?php endif; ?>
 
-            <?php if ($message): ?>
-                <div class="alert alert-success alert-dismissible fade show mb-24" role="alert">
-                    <i class="ph ph-check-circle me-2"></i>
-                    <?php echo htmlspecialchars($message); ?>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                </div>
-            <?php endif; ?>
-
-            <?php if ($error): ?>
-                <div class="alert alert-danger alert-dismissible fade show mb-24" role="alert">
-                    <i class="ph ph-warning-circle me-2"></i>
-                    <?php echo htmlspecialchars($error); ?>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                </div>
-            <?php endif; ?>
-
             <!-- Schools Management Start -->
             <div class="card">
                 <div class="card-header border-bottom border-gray-100 flex-between flex-wrap gap-8">
@@ -335,7 +418,7 @@ $flash = get_flash_message();
                                         </div>
                                     </td>
                                     <td>
-                                        <span class="text-15 fw-medium"><?php echo htmlspecialchars($sch['organization_name']); ?></span>
+                                        <span class="text-dark "><?php echo htmlspecialchars($sch['organization_name']); ?></span>
                                     </td>
                                     <td>
                                         <div>
@@ -470,6 +553,67 @@ $flash = get_flash_message();
                             <label for="address" class="form-label h6 mb-8">Address</label>
                             <textarea class="form-control py-11" name="address" id="address" rows="2" placeholder="Enter school address"></textarea>
                         </div>
+
+                        <div class="mt-24 pt-24 border-top border-gray-100">
+                            <div class="flex-between mb-16">
+                                <h6 class="mb-0">School Admin</h6>
+                                <div class="form-check form-switch" id="createAdminSwitchContainer">
+                                    <input class="form-check-input" type="checkbox" name="create_admin" id="createAdmin" value="1">
+                                    <label class="form-check-label" for="createAdmin">Manage Admin User</label>
+                                </div>
+                            </div>
+
+                            <input type="hidden" name="admin_user_id" id="adminUserId">
+
+                            <div id="adminFields" style="display: none;">
+                                <div class="row g-20">
+                                    <div class="col-md-6">
+                                        <label for="admin_full_name" class="form-label h6 mb-8">Full Name <span class="text-danger">*</span></label>
+                                        <input type="text" class="form-control py-11" name="admin_full_name" id="adminFullName" placeholder="Enter full name">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="admin_username" class="form-label h6 mb-8">Username <span class="text-danger">*</span></label>
+                                        <input type="text" class="form-control py-11" name="admin_username" id="adminUsername" placeholder="Enter username">
+                                    </div>
+                                </div>
+
+                                <div class="row g-20 mt-16">
+                                    <div class="col-md-6">
+                                        <label for="admin_email" class="form-label h6 mb-8">Email Address <span class="text-danger">*</span></label>
+                                        <input type="email" class="form-control py-11" name="admin_email" id="adminEmail" placeholder="Enter email address">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="admin_password" class="form-label h6 mb-8">Password <span class="admin-pass-label"></span></label>
+                                        <input type="password" class="form-control py-11" name="admin_password" id="adminPassword" placeholder="Enter password">
+                                        <small class="text-gray-400 edit-pass-note" style="display: none;">Leave blank to keep current password</small>
+                                    </div>
+                                </div>
+
+                                <div class="mt-16">
+                                    <label class="form-label h6 mb-8">Class/Course Access</label>
+                                    <div class="row g-10">
+                                        <?php if (empty($classes)): ?>
+                                            <div class="col-12 text-gray-400 text-13">No active classes available.</div>
+                                        <?php else: ?>
+                                            <?php foreach ($classes as $cls): ?>
+                                                <div class="col-md-4">
+                                                    <div class="form-check">
+                                                        <input class="form-check-input class-permission-checkbox" type="checkbox" name="class_ids[]"
+                                                               value="<?php echo $cls['id']; ?>" id="class_<?php echo $cls['id']; ?>">
+                                                        <label class="form-check-label text-13" for="class_<?php echo $cls['id']; ?>">
+                                                            <?php echo htmlspecialchars($cls['class_name']); ?>
+                                                            <span class="badge bg-<?php echo $cls['type'] === 'class' ? 'info' : 'warning'; ?>-50 text-<?php echo $cls['type'] === 'class' ? 'info' : 'warning'; ?>-600 text-10">
+                                                                <?php echo ucfirst($cls['type']); ?>
+                                                            </span>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            <?php endforeach; ?>
+                                        <?php endif; ?>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         
                         <div class="flex-align justify-content-end gap-8 mt-24">
                             <button type="button" class="btn btn-outline-gray rounded-pill py-9" data-bs-dismiss="modal">Cancel</button>
@@ -559,6 +703,19 @@ $flash = get_flash_message();
 
             // Initialize tooltips
             $('[data-bs-toggle="tooltip"]').tooltip();
+
+            $('#createAdmin').on('change', function() {
+                if ($(this).is(':checked')) {
+                    $('#adminFields').slideDown();
+                    $('#adminFullName, #adminUsername, #adminEmail').prop('required', true);
+                    if ($('#formAction').val() === 'create') {
+                        $('#adminPassword').prop('required', true);
+                    }
+                } else {
+                    $('#adminFields').slideUp();
+                    $('#adminFullName, #adminUsername, #adminEmail, #adminPassword').prop('required', false);
+                }
+            });
         });
 
         function openCreateModal() {
@@ -567,6 +724,12 @@ $flash = get_flash_message();
             document.getElementById('submitBtn').innerHTML = '<i class="ph ph-plus me-2"></i>Create School';
             document.querySelector('#schoolForm').reset();
             document.getElementById('schoolId').value = '';
+            document.getElementById('adminUserId').value = '';
+            document.getElementById('createAdmin').checked = false;
+            document.getElementById('adminFields').style.display = 'none';
+            document.querySelector('.admin-pass-label').innerHTML = '<span class="text-danger">*</span>';
+            document.querySelector('.edit-pass-note').style.display = 'none';
+            document.querySelectorAll('.class-permission-checkbox').forEach(cb => cb.checked = false);
         }
         
         function editSchool(schoolData) {
@@ -582,6 +745,38 @@ $flash = get_flash_message();
             document.getElementById('description').value = schoolData.description || '';
             document.getElementById('address').value = schoolData.address || '';
             document.getElementById('status').value = schoolData.status;
+
+            document.getElementById('adminUserId').value = '';
+            document.getElementById('createAdmin').checked = false;
+            document.getElementById('adminFields').style.display = 'none';
+            document.querySelectorAll('.class-permission-checkbox').forEach(cb => cb.checked = false);
+
+            if (schoolData.admin_user_id) {
+                document.getElementById('adminUserId').value = schoolData.admin_user_id;
+                document.getElementById('adminFullName').value = schoolData.admin_full_name || '';
+                document.getElementById('adminUsername').value = schoolData.admin_username || '';
+                document.getElementById('adminEmail').value = schoolData.admin_email || '';
+                document.getElementById('adminPassword').value = '';
+
+                document.getElementById('createAdmin').checked = true;
+                document.getElementById('adminFields').style.display = 'block';
+
+                document.querySelector('.admin-pass-label').innerHTML = '';
+                document.querySelector('.edit-pass-note').style.display = 'block';
+                $('#adminFullName, #adminUsername, #adminEmail').prop('required', true);
+                $('#adminPassword').prop('required', false);
+
+                if (schoolData.admin_class_ids) {
+                    const classIds = schoolData.admin_class_ids.split(',');
+                    classIds.forEach(id => {
+                        const cb = document.getElementById('class_' + id);
+                        if (cb) cb.checked = true;
+                    });
+                }
+            } else {
+                document.querySelector('.admin-pass-label').innerHTML = '<span class="text-danger">*</span>';
+                document.querySelector('.edit-pass-note').style.display = 'none';
+            }
             
             new bootstrap.Modal(document.getElementById('schoolModal')).show();
         }
