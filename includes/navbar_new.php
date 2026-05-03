@@ -120,7 +120,7 @@ $avatar_url = user_avatar_url($current_user ?? []);
                                     <span class="text">Account Settings</span>
                                 </a>
                             </li>
-                            <?php if (in_array($user_role, ['super_admin', 'organization_admin'])): ?>
+                            <?php if (can('users.view')): ?>
                             <li class="mb-4">
                                 <a href="users.php" class="py-12 text-15 px-20 hover-bg-gray-50 text-gray-300 rounded-8 flex-align gap-8 fw-medium text-15">
                                     <span class="text-2xl text-primary-600 d-flex"><i class="ph ph-users-three"></i></span>
@@ -128,18 +128,22 @@ $avatar_url = user_avatar_url($current_user ?? []);
                                 </a>
                             </li>
                             <?php endif; ?>
+                            <?php if (can('classes.view')): ?>
                             <li class="mb-4">
                                 <a href="classes.php" class="py-12 text-15 px-20 hover-bg-gray-50 text-gray-300 rounded-8 flex-align gap-8 fw-medium text-15">
                                     <span class="text-2xl text-primary-600 d-flex"><i class="ph ph-graduation-cap"></i></span>
                                     <span class="text">My Classes</span>
                                 </a>
                             </li>
+                            <?php endif; ?>
+                            <?php if (can('lectures.view')): ?>
                             <li class="mb-4">
                                 <a href="lectures.php" class="py-12 text-15 px-20 hover-bg-gray-50 text-gray-300 rounded-8 flex-align gap-8 fw-medium text-15">
                                     <span class="text-2xl text-primary-600 d-flex"><i class="ph ph-books"></i></span>
                                     <span class="text">My Lectures</span>
                                 </a>
                             </li>
+                            <?php endif; ?>
                             <li class="pt-8 border-top border-gray-100">
                                 <a href="logout.php" class="py-12 text-15 px-20 hover-bg-danger-50 text-gray-300 hover-text-danger-600 rounded-8 flex-align gap-8 fw-medium text-15">
                                     <span class="text-2xl text-danger-600 d-flex"><i class="ph ph-sign-out"></i></span>

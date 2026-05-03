@@ -11,10 +11,7 @@ require_once 'classes/Role.php';
 $current_user = current_user();
 $user_role = $_SESSION['role'] ?? '';
 
-// Super Admin can manage all schools, Organization Admin can manage schools in their org
-if (!in_array($user_role, ['super_admin', 'organization_admin'])) {
-    redirect('dashboard.php');
-}
+require_permission('schools.view', 'dashboard.php');
 $database = new Database();
 $db = $database->getConnection();
 $school = new School($db);
@@ -57,6 +54,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         switch ($_POST['action']) {
             case 'create':
+                if (!can('schools.create')) permission_denied('schools.php');
                 $data = [
                     'organization_id' => $_POST['organization_id'],
                     'name' => trim($_POST['name']),
@@ -101,6 +99,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 break;
                 
             case 'update':
+                if (!can('schools.edit')) permission_denied('schools.php');
                 $school_id = $_POST['school_id'];
                 $data = [
                     'organization_id' => $_POST['organization_id'],
@@ -170,6 +169,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 break;
                 
             case 'delete':
+                if (!can('schools.delete')) permission_denied('schools.php');
                 $school_id = $_POST['school_id'];
                 $school_data = $school->getById($school_id);
                 

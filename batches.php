@@ -10,7 +10,7 @@ require_once 'classes/ClassModel.php';
 require_once 'classes/User.php';
 require_once 'includes/functions.php';
 
-require_roles(['super_admin', 'organization_admin', 'school_admin', 'teacher']);
+require_permission('batches.view', 'dashboard.php');
 
 $current_user = current_user();
 $user_role = $_SESSION['role'] ?? '';
@@ -32,6 +32,7 @@ $batch_id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 
 // Backward-compatible redirect to new student management page
 if ($action === 'manage_students' && $batch_id > 0) {
+    if (!can('batches.manage_students')) permission_denied('batches.php');
     redirect('batch-students.php?batch_id=' . $batch_id);
 }
 
@@ -41,6 +42,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $errors = [];
 
     if ($action == 'create' || $action == 'update') {
+        if ($action == 'create' && !can('batches.create')) permission_denied('batches.php');
+        if ($action == 'update' && !can('batches.edit')) permission_denied('batches.php');
         if (empty($_POST['batch_name'])) $errors[] = 'Batch name is required';
         if (empty($_POST['batch_code'])) $errors[] = 'Batch code is required';
         if (empty($_POST['class_id'])) $errors[] = 'Class/Course is required';
@@ -87,6 +90,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             }
         }
     } elseif ($action == 'delete' && $batch_id > 0) {
+        if (!can('batches.delete')) permission_denied('batches.php');
         $batchModel->id = $batch_id;
         if ($batchModel->delete()) {
             flash_message('Batch deleted successfully', 'success');
@@ -96,6 +100,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             redirect('batches.php');
         }
     } elseif ($action == 'update_enrollment_status') {
+        if (!can('enrollments.manage')) permission_denied('batches.php');
         $enrollment_id = (int)$_POST['enrollment_id'];
         $new_status = $_POST['new_status'];
         $enrollmentModel->id = $enrollment_id;
@@ -106,6 +111,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
         exit;
     } elseif ($action == 'generate_link') {
+        if (!can('batches.generate_links')) permission_denied('batches.php');
         $linkModel->batch_id = (int)$_POST['batch_id'];
         $linkModel->link_type = $_POST['link_type'];
         $linkModel->max_uses = !empty($_POST['max_uses']) ? (int)$_POST['max_uses'] : null;
@@ -123,6 +129,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 // Get data for edit action
 if ($action == 'edit' && $batch_id > 0) {
+    if (!can('batches.edit')) permission_denied('batches.php');
     $batchModel->id = $batch_id;
     if (!$batchModel->readOne()) {
         flash_message('Batch not found', 'error');
@@ -141,6 +148,7 @@ if ($action == 'list') {
         redirect('batches.php');
     }
 } elseif ($action == 'manage_students' && $batch_id > 0) {
+    if (!can('batches.manage_students')) permission_denied('batches.php');
     $batchModel->id = $batch_id;
     $batch = $batchModel->readOne();
     if (!$batch) {

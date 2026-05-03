@@ -1,12 +1,9 @@
 <?php
 require_once 'config/config.php';
+require_once 'includes/functions.php';
 require_once 'classes/ZoomAPI.php';
 
-// Only super admin can test
-session_start();
-if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'super_admin') {
-    die('❌ Access denied - Super admin only');
-}
+require_any_permission(['zoom.create', 'zoom.edit', 'zoom.delete'], 'dashboard.php');
 
 echo "<h2>Zoom API Connection Test</h2>";
 echo "<style>

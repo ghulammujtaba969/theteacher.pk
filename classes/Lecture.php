@@ -430,6 +430,250 @@ class Lecture
         }
     }
 
+    public function handleISpringUpload($file, $lecture_id, $syllabus_id = null, $lecture_order = null)
+    {
+        $errors = [];
+
+        if (!class_exists('ZipArchive')) {
+            return ['success' => false, 'errors' => ['PHP ZipArchive extension is not installed.']];
+        }
+
+        if (($file['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_OK) {
+            return ['success' => false, 'errors' => ['File upload error occurred.']];
+        }
+
+        $extension = strtolower(pathinfo($file['name'] ?? '', PATHINFO_EXTENSION));
+        if ($extension !== 'zip') {
+            return ['success' => false, 'errors' => ['Invalid file type. Only ZIP files are allowed.']];
+        }
+
+        $allowed_mime_types = ['application/zip', 'application/x-zip-compressed', 'application/octet-stream'];
+        if (function_exists('finfo_open')) {
+            $file_info = finfo_open(FILEINFO_MIME_TYPE);
+            $mime_type = $file_info ? finfo_file($file_info, $file['tmp_name']) : '';
+            if ($file_info) {
+                finfo_close($file_info);
+            }
+
+            if ($mime_type && !in_array($mime_type, $allowed_mime_types, true)) {
+                return ['success' => false, 'errors' => ['Invalid file type. Only ZIP files are allowed.']];
+            }
+        }
+
+        $max_size = 100 * 1024 * 1024;
+        if (($file['size'] ?? 0) > $max_size) {
+            return ['success' => false, 'errors' => ['File size exceeds maximum allowed size (100MB).']];
+        }
+
+        $tmp_base_dir = 'uploads/ispring/tmp/';
+        if (!file_exists($tmp_base_dir) && !mkdir($tmp_base_dir, 0755, true)) {
+            return ['success' => false, 'errors' => ['Failed to create iSpring upload directory.']];
+        }
+
+        $tmp_extract_dir = $tmp_base_dir . 'lecture_' . (int)$lecture_id . '_' . time() . '/';
+        if (!mkdir($tmp_extract_dir, 0755, true)) {
+            return ['success' => false, 'errors' => ['Failed to create temporary extraction directory.']];
+        }
+
+        $zip = new ZipArchive();
+        $zip_result = $zip->open($file['tmp_name']);
+        if ($zip_result !== true) {
+            $this->deleteDirectory($tmp_extract_dir);
+            return ['success' => false, 'errors' => ['Failed to open ZIP file.']];
+        }
+
+        for ($i = 0; $i < $zip->numFiles; $i++) {
+            $entry_name = $zip->getNameIndex($i);
+            $normalized_entry = str_replace('\\', '/', $entry_name);
+
+            if ($normalized_entry === '' || str_starts_with($normalized_entry, '/') || strpos($normalized_entry, ':') !== false || preg_match('#(^|/)\.\.(/|$)#', $normalized_entry)) {
+                $zip->close();
+                $this->deleteDirectory($tmp_extract_dir);
+                return ['success' => false, 'errors' => ['The ZIP package contains unsafe file paths.']];
+            }
+        }
+
+        if (!$zip->extractTo($tmp_extract_dir)) {
+            $zip->close();
+            $this->deleteDirectory($tmp_extract_dir);
+            return ['success' => false, 'errors' => ['Failed to extract ZIP file.']];
+        }
+        $zip->close();
+
+        $content_root = $this->resolveISpringContentRoot($tmp_extract_dir);
+        $index_path = $this->findISpringIndexFile($content_root);
+        if (!$index_path) {
+            $this->deleteDirectory($tmp_extract_dir);
+            return ['success' => false, 'errors' => ['Could not find index.html in the ZIP package.']];
+        }
+
+        $target_dir = $this->getISpringLectureDirectory($lecture_id, $syllabus_id, $lecture_order);
+        if (!file_exists($target_dir) && !mkdir($target_dir, 0755, true)) {
+            $this->deleteDirectory($tmp_extract_dir);
+            return ['success' => false, 'errors' => ['Failed to create lecture content directory.']];
+        }
+
+        if (!$this->copyDirectoryContents($content_root, $target_dir)) {
+            $this->deleteDirectory($tmp_extract_dir);
+            return ['success' => false, 'errors' => ['Failed to move iSpring files into the lecture folder.']];
+        }
+
+        $target_index_path = $this->makeRelativePath($target_dir . basename($index_path));
+        if (!file_exists($target_index_path)) {
+            $target_index_path = $this->findISpringIndexFile($target_dir);
+        }
+
+        $this->deleteDirectory($tmp_extract_dir);
+
+        if (!$target_index_path) {
+            return ['success' => false, 'errors' => ['Could not find index.html after moving iSpring files.']];
+        }
+
+        return [
+            'success' => true,
+            'index_path' => $target_index_path,
+            'folder_path' => $target_dir,
+            'original_name' => $file['name'],
+            'size' => $file['size']
+        ];
+    }
+
+    private function getISpringLectureDirectory($lecture_id, $syllabus_id = null, $lecture_order = null)
+    {
+        $class_slug = null;
+
+        if ($syllabus_id) {
+            $query = "SELECT COALESCE(c1.class_name, c2.class_name, c1.class_code, c2.class_code) as class_label
+                      FROM syllabi sy
+                      LEFT JOIN subjects s ON sy.subject_id = s.id
+                      LEFT JOIN classes c1 ON s.class_id = c1.id
+                      LEFT JOIN classes c2 ON sy.class_id = c2.id
+                      WHERE sy.id = ?
+                      LIMIT 1";
+            $stmt = $this->conn->prepare($query);
+            $stmt->execute([(int)$syllabus_id]);
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+            if ($row && !empty($row['class_label'])) {
+                $class_slug = $this->slugifyPathSegment($row['class_label']);
+            }
+        }
+
+        if (!$class_slug) {
+            $class_slug = 'class';
+        }
+
+        $lecture_number = (int)$lecture_order > 0 ? (int)$lecture_order : (int)$lecture_id;
+
+        return 'lectures/' . $class_slug . '/lecture-' . $lecture_number . '/';
+    }
+
+    private function slugifyPathSegment($value)
+    {
+        $value = strtolower(trim((string)$value));
+        $value = preg_replace('/[^a-z0-9]+/', '-', $value);
+        $value = trim($value, '-');
+
+        return $value !== '' ? $value : 'class';
+    }
+
+    private function resolveISpringContentRoot($extract_dir)
+    {
+        $items = array_values(array_filter(scandir($extract_dir), function ($item) {
+            return $item !== '.' && $item !== '..';
+        }));
+
+        if (count($items) === 1 && is_dir($extract_dir . $items[0])) {
+            return rtrim($extract_dir . $items[0], '/\\') . '/';
+        }
+
+        return $extract_dir;
+    }
+
+    private function copyDirectoryContents($source_dir, $target_dir)
+    {
+        $source_dir = rtrim($source_dir, '/\\') . DIRECTORY_SEPARATOR;
+        $target_dir = rtrim($target_dir, '/\\') . DIRECTORY_SEPARATOR;
+
+        if (!file_exists($target_dir) && !mkdir($target_dir, 0755, true)) {
+            return false;
+        }
+
+        foreach (scandir($source_dir) as $item) {
+            if ($item === '.' || $item === '..') {
+                continue;
+            }
+
+            $source = $source_dir . $item;
+            $target = $target_dir . $item;
+
+            if (is_dir($source)) {
+                if (!$this->copyDirectoryContents($source, $target)) {
+                    return false;
+                }
+            } elseif (!copy($source, $target)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private function makeRelativePath($path)
+    {
+        return str_replace('\\', '/', $path);
+    }
+
+    private function findISpringIndexFile($extract_dir)
+    {
+        $possible_index_files = ['index.html', 'index.htm', 'story.html', 'story_html5.html'];
+
+        foreach ($possible_index_files as $possible_file) {
+            if (file_exists($extract_dir . $possible_file)) {
+                return $extract_dir . $possible_file;
+            }
+        }
+
+        $iterator = new RecursiveIteratorIterator(
+            new RecursiveDirectoryIterator($extract_dir, FilesystemIterator::SKIP_DOTS),
+            RecursiveIteratorIterator::SELF_FIRST
+        );
+
+        foreach ($iterator as $file_info) {
+            if (!$file_info->isFile()) {
+                continue;
+            }
+
+            if (in_array(strtolower($file_info->getFilename()), $possible_index_files, true)) {
+                return str_replace('\\', '/', $file_info->getPathname());
+            }
+        }
+
+        return null;
+    }
+
+    private function deleteDirectory($dir)
+    {
+        if (!file_exists($dir)) {
+            return true;
+        }
+
+        if (!is_dir($dir)) {
+            return unlink($dir);
+        }
+
+        foreach (scandir($dir) as $item) {
+            if ($item === '.' || $item === '..') {
+                continue;
+            }
+
+            if (!$this->deleteDirectory($dir . DIRECTORY_SEPARATOR . $item)) {
+                return false;
+            }
+        }
+
+        return rmdir($dir);
+    }
+
     public function handleImageUpload($file, $old_image = null)
     {
         $upload_dir = 'uploads/lectures/';

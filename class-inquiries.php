@@ -5,8 +5,7 @@ require_once 'includes/functions.php';
 require_once 'classes/ClassInquiry.php';
 require_once 'classes/User.php';
 
-// Check if user is logged in and has admin privileges
-require_roles(['super_admin', 'organization_admin', 'school_admin']);
+require_permission('inquiries.view', 'dashboard.php');
 
 $current_user = current_user();
 $user_role = $_SESSION['role'] ?? '';
@@ -24,6 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['action'])) {
         switch ($_POST['action']) {
             case 'approve':
+                if (!can('inquiries.approve')) permission_denied('class-inquiries.php');
                 $inquiry_id = (int)$_POST['inquiry_id'];
                 $admin_notes = sanitize_input($_POST['admin_notes'] ?? '');
 
@@ -52,6 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 break;
 
             case 'reject':
+                if (!can('inquiries.reject')) permission_denied('class-inquiries.php');
                 $inquiry_id = (int)$_POST['inquiry_id'];
                 $admin_notes = sanitize_input($_POST['admin_notes'] ?? '');
                 if ($classInquiry->reject($inquiry_id, $current_user['id'], $admin_notes)) {
@@ -63,6 +64,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 break;
 
             case 'bulk_approve':
+                if (!can('inquiries.approve')) permission_denied('class-inquiries.php');
                 $inquiry_ids_string = $_POST['inquiry_ids'] ?? '';
                 $inquiry_ids = array_filter(array_map('intval', explode(',', $inquiry_ids_string)));
                 $admin_notes = sanitize_input($_POST['admin_notes'] ?? '');

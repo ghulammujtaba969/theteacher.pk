@@ -9,6 +9,10 @@ require_once 'classes/Role.php';
 
 // Handle AJAX requests for user class permissions
 if (isset($_GET['ajax']) && $_GET['ajax'] === 'get_user_class_ids' && isset($_GET['user_id'])) {
+    if (!is_logged_in() || !can('class_access.view')) {
+        http_response_code(403);
+        exit;
+    }
     $database = new Database();
     $db = $database->getConnection();
     $classAccess = new ClassAccess($db);
@@ -26,11 +30,7 @@ define('ALL_CLASSES_OPTION_VALUE', -1);
 $current_user = current_user();
 $user_role = $_SESSION['role'] ?? '';
 
-// Super Admin and Organization Admin can manage class access
-// School Admin can manage teacher access
-if (!in_array($user_role, ['super_admin', 'organization_admin', 'school_admin'])) {
-    redirect('dashboard.php');
-}
+require_permission('class_access.view', 'dashboard.php');
 
 $database = new Database();
 $db = $database->getConnection();
@@ -47,6 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['action'])) {
         switch ($_POST['action']) {
             case 'assign_access':
+                if (!can('class_access.grant')) permission_denied('class-access.php');
                 $user_id = (int)$_POST['user_id'];
                 $assign_all_classes = isset($_POST['assign_all_classes']) && $_POST['assign_all_classes'] === 'on';
                 $class_ids = isset($_POST['class_ids']) ? (array)$_POST['class_ids'] : [];
@@ -163,6 +164,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 break;
                 
             case 'revoke_access':
+                if (!can('class_access.revoke')) permission_denied('class-access.php');
                 $user_id = (int)$_POST['user_id'];
                 $class_id = (int)$_POST['class_id'];
 

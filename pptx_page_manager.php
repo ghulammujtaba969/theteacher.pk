@@ -1,4 +1,8 @@
 <?php
+require_once 'config/config.php';
+require_once 'includes/functions.php';
+require_permission('pptx.manage', 'dashboard.php');
+
 // config.php - Configuration file
 define('BASE_DIR', 'lectures');
 define('ALLOWED_EXTENSIONS', ['php']);

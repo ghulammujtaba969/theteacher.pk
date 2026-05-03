@@ -7,7 +7,7 @@ require_once 'classes/Batch.php';
 require_once 'classes/BatchEnrollment.php';
 
 // Admin roles only
-require_roles(['super_admin','organization_admin','school_admin']);
+require_permission('batches.manage_students', 'batches.php');
 
 $current_user = current_user();
 

@@ -11,8 +11,7 @@ require_once 'classes/School.php';
 require_once 'classes/PendingUser.php';
 require_once 'classes/ClassModel.php';
 
-// Check if user is logged in and has permission
-require_roles(['super_admin']);
+require_permission('pending_registrations.view', 'dashboard.php');
 
 $database = new Database();
 $db = $database->getConnection();
@@ -34,12 +33,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     $admin_notes = filter_input(INPUT_POST, 'admin_notes', FILTER_SANITIZE_STRING);
 
     if ($_POST['action'] === 'approve') {
+        if (!can('pending_registrations.approve')) permission_denied('pending_registrations.php');
         if ($pendingUser->approve($pending_user_id, $current_user['id'], $admin_notes)) {
             $message = 'User registration approved and moved to active users.';
         } else {
             $error = 'Failed to approve user registration.';
         }
     } elseif ($_POST['action'] === 'reject') {
+        if (!can('pending_registrations.reject')) permission_denied('pending_registrations.php');
         if ($pendingUser->reject($pending_user_id, $current_user['id'], $admin_notes)) {
             $message = 'User registration rejected.';
         } else {

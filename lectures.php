@@ -10,6 +10,8 @@ require_once 'classes/Syllabus.php';
 require_once 'classes/BatchEnrollment.php';
 require_once 'classes/ClassModel.php';
 
+require_permission('lectures.view', 'dashboard.php');
+
 $current_user = current_user();
 $user_role = $_SESSION['role'] ?? '';
 
@@ -66,12 +68,50 @@ if ($class_filter > 0) {
     }
 }
 
+function canAccessSyllabusForLectureForm($lecture, $syllabus_id, $can_access_all_classes_flag, $accessible_class_ids)
+{
+    if ($syllabus_id <= 0) {
+        return false;
+    }
+
+    $syllabi_stmt = $lecture->getActiveSyllabi($can_access_all_classes_flag ? [] : $accessible_class_ids);
+    while ($syllabus_row = $syllabi_stmt->fetch(PDO::FETCH_ASSOC)) {
+        if ((int)$syllabus_row['id'] === (int)$syllabus_id) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+if (isset($_GET['ajax']) && $_GET['ajax'] === 'get_next_order') {
+    header('Content-Type: application/json');
+
+    if (!can('lectures.create') && !can('lectures.edit')) {
+        http_response_code(403);
+        echo json_encode(['error' => 'Permission denied']);
+        exit;
+    }
+
+    $ajax_syllabus_id = isset($_GET['syllabus_id']) ? (int)$_GET['syllabus_id'] : 0;
+    if (!canAccessSyllabusForLectureForm($lecture, $ajax_syllabus_id, $can_access_all_classes_flag, $accessible_class_ids)) {
+        http_response_code(403);
+        echo json_encode(['error' => 'Syllabus not available']);
+        exit;
+    }
+
+    echo json_encode(['next_order' => $lecture->getNextOrder($ajax_syllabus_id)]);
+    exit;
+}
+
 // Handle form submissions
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $action = $_POST['action'] ?? '';
     $errors = [];
 
     if ($action == 'create' || $action == 'update') {
+        if ($action == 'create' && !can('lectures.create')) permission_denied('lectures.php');
+        if ($action == 'update' && !can('lectures.edit')) permission_denied('lectures.php');
         try {
             // Validate required fields
             if (empty($_POST['lecture_title'])) {
@@ -198,6 +238,25 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                     'display_order' => $display_order++
                                 ]);
                             }
+
+                            // Handle iSpring HTML5 package upload
+                            if (isset($_POST['enable_ispring']) && !empty($_FILES['ispring_file']['name'])) {
+                                $ispring_result = $lecture->handleISpringUpload($_FILES['ispring_file'], $lecture_id, $lecture->syllabus_id, $lecture->lecture_order);
+                                if ($ispring_result['success']) {
+                                    $lecture->createLectureFile([
+                                        'lecture_id' => $lecture_id,
+                                        'file_type' => 'ispring',
+                                        'file_url' => $ispring_result['index_path'],
+                                        'file_name' => $ispring_result['original_name'],
+                                        'file_size' => $ispring_result['size'],
+                                        'text_content' => null,
+                                        'duration_minutes' => null,
+                                        'display_order' => $display_order++
+                                    ]);
+                                } else {
+                                    $errors[] = 'iSpring upload failed: ' . implode(', ', $ispring_result['errors']);
+                                }
+                            }
                             
                             // Handle Video (URL or upload)
                             if (isset($_POST['enable_video'])) {
@@ -264,8 +323,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             }
                         }
                         
-                        flash_message('Lecture created successfully', 'success');
-                        redirect('lectures.php');
+                        if (empty($errors)) {
+                            flash_message('Lecture created successfully', 'success');
+                            redirect('lectures.php');
+                        }
                     } else {
                         $errors[] = 'Failed to create lecture';
                     }
@@ -307,6 +368,25 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                     'display_order' => $display_order++
                                 ]);
                             }
+
+                            // Handle iSpring HTML5 package upload
+                            if (isset($_POST['enable_ispring']) && !empty($_FILES['ispring_file']['name'])) {
+                                $ispring_result = $lecture->handleISpringUpload($_FILES['ispring_file'], $lecture_id, $lecture->syllabus_id, $lecture->lecture_order);
+                                if ($ispring_result['success']) {
+                                    $lecture->createLectureFile([
+                                        'lecture_id' => $lecture_id,
+                                        'file_type' => 'ispring',
+                                        'file_url' => $ispring_result['index_path'],
+                                        'file_name' => $ispring_result['original_name'],
+                                        'file_size' => $ispring_result['size'],
+                                        'text_content' => null,
+                                        'duration_minutes' => null,
+                                        'display_order' => $display_order++
+                                    ]);
+                                } else {
+                                    $errors[] = 'iSpring upload failed: ' . implode(', ', $ispring_result['errors']);
+                                }
+                            }
                             
                             // Handle Video (URL or upload)
                             if (isset($_POST['enable_video'])) {
@@ -373,8 +453,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             }
                         }
                         
-                        flash_message('Lecture updated successfully', 'success');
-                        redirect('lectures.php?action=view&id=' . $lecture->id);
+                        if (empty($errors)) {
+                            flash_message('Lecture updated successfully', 'success');
+                            redirect('lectures.php?action=view&id=' . $lecture->id);
+                        }
                     } else {
                         $errors[] = 'Failed to update lecture';
                     }
@@ -384,6 +466,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $errors[] = $e->getMessage();
         }
     } elseif ($action == 'delete') {
+        if (!can('lectures.delete')) permission_denied('lectures.php');
         $lecture->id = (int)$_POST['id'];
         if ($lecture->delete()) {
             flash_message('Lecture deleted successfully', 'success');
@@ -396,6 +479,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 // Get lecture data for edit
 if ($action == 'edit' && $lecture_id > 0) {
+    if (!can('lectures.edit')) permission_denied('lectures.php');
     $lecture->id = $lecture_id;
     if (!$lecture->readOne($can_access_all_classes_flag ? [] : $accessible_class_ids)) {
         flash_message('Lecture not found or you do not have permission to view it.', 'error');
@@ -538,8 +622,16 @@ $flash = get_flash_message();
                                 }
                                 ?>
                             </ul>
-                            <?php if ($user_role === 'super_admin'): ?>
-                            <a href="lectures.php?action=add" class="btn btn-main rounded-pill py-7 flex-align gap-4 fw-normal">
+                            <?php if (can('lectures.create')): ?>
+                            <?php
+                                $add_lecture_url = 'lectures.php?action=add';
+                                if ($syllabus_filter > 0) {
+                                    $add_lecture_url .= '&syllabus=' . $syllabus_filter;
+                                } elseif ($class_filter > 0) {
+                                    $add_lecture_url .= '&class=' . $class_filter;
+                                }
+                            ?>
+                            <a href="<?php echo $add_lecture_url; ?>" class="btn btn-main rounded-pill py-7 flex-align gap-4 fw-normal">
                                 <span class="d-flex text-md"><i class="ph ph-plus"></i></span> 
                                 Add New Lecture
                             </a>
@@ -555,13 +647,25 @@ $flash = get_flash_message();
                                     } else {
                                         $stmt = $lecture->read($allowed_class_ids_for_listing);
                                     }
+
+                                    $lecture_rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                                    if ($class_filter > 0) {
+                                        $lecture_rows = array_values(array_filter($lecture_rows, function ($row) use ($class_filter) {
+                                            return (int)$row['class_id'] === $class_filter;
+                                        }));
+                                    }
+
+                                    $per_page = isset($_GET['pp']) ? max(6, min(60, (int)$_GET['pp'])) : 12;
+                                    $page = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
+                                    $total = count($lecture_rows);
+                                    $pages = max(1, (int)ceil($total / $per_page));
+                                    if ($page > $pages) { $page = $pages; }
+                                    $offset = ($page - 1) * $per_page;
+                                    $paged_lectures = array_slice($lecture_rows, $offset, $per_page);
                                     
-                                    if ($stmt->rowCount() > 0) {
+                                    if ($total > 0) {
                                         
-                                        while ($row = $stmt->fetch()) {
-                                            if ($class_filter > 0 && (int)$row['class_id'] !== $class_filter) {
-                                                continue;
-                                            }
+                                        foreach ($paged_lectures as $row) {
                                             $type_class = 'type-' . $row['lecture_type'];
                                             $type_color = '';
                                             $type_icon = '';
@@ -639,14 +743,18 @@ $flash = get_flash_message();
                                                     
                                                     <div class="flex-between gap-8 mt-16">
                                                         <a href="lectures.php?action=view&id=<?php echo $row['id']; ?>" class="btn btn-outline-main rounded-pill py-9 flex-grow-1">View Lecture</a>
-                                                        <?php if ($user_role === 'super_admin'): ?>
+                                                        <?php if (can('lectures.edit') || can('lectures.delete')): ?>
                                                         <div class="flex-align gap-4">
+                                                            <?php if (can('lectures.edit')): ?>
                                                             <a href="lectures.php?action=edit&id=<?php echo $row['id']; ?>" class="w-32 h-32 flex-center bg-success-50 text-success-600 rounded-circle hover-bg-success-600 hover-text-white">
                                                                 <i class="ph ph-pencil"></i>
                                                             </a>
+                                                            <?php endif; ?>
+                                                            <?php if (can('lectures.delete')): ?>
                                                             <button onclick="confirmDelete(<?php echo $row['id']; ?>, '<?php echo htmlspecialchars($row['lecture_title']); ?>')" class="w-32 h-32 flex-center bg-danger-50 text-danger-600 rounded-circle hover-bg-danger-600 hover-text-white border-0">
                                                                 <i class="ph ph-trash"></i>
                                                             </button>
+                                                            <?php endif; ?>
                                                         </div>
                                                         <?php endif; ?>
                                                     </div>
@@ -662,7 +770,7 @@ $flash = get_flash_message();
                                         echo '<i class="ph ph-books text-6xl text-gray-400 mb-16 d-block"></i>';
                                         echo '<h5 class="text-gray-500 mb-8">No Lectures Found</h5>';
                                         echo '<p class="text-gray-400">There are no lectures available at the moment.</p>';
-                                        if ($user_role === 'super_admin') {
+                                        if (can('lectures.create')) {
                                             echo '<a href="lectures.php?action=add" class="btn btn-main rounded-pill mt-16">Add First Lecture</a>';
                                         }
                                         echo '</div>';
@@ -670,15 +778,53 @@ $flash = get_flash_message();
                                     }
                                     ?>
                                 </div>
+                                <?php if ($total > 0): ?>
+                                <div class="card-footer flex-between flex-wrap mt-24 px-0 pb-0">
+                                    <?php
+                                        $start_i = $offset + 1;
+                                        $end_i = min($offset + $per_page, $total);
+                                        $qs = $_GET;
+                                        unset($qs['page'], $qs['pp']);
+                                        $base = basename($_SERVER['PHP_SELF']) . (empty($qs) ? '' : ('?' . http_build_query($qs)));
+                                        $build_page_link = function ($p, $pp) use ($base) {
+                                            return $base . (strpos($base, '?') !== false ? '&' : '?') . 'page=' . $p . '&pp=' . $pp;
+                                        };
+                                    ?>
+                                    <span class="text-gray-900">Showing <?php echo $start_i; ?> to <?php echo $end_i; ?> of <?php echo $total; ?> lectures</span>
+                                    <ul class="pagination flex-align flex-wrap">
+                                        <li class="page-item <?php echo $page <= 1 ? 'disabled' : ''; ?>">
+                                            <a class="page-link h-44 w-44 flex-center text-15 rounded-8 fw-medium" href="<?php echo $page > 1 ? $build_page_link($page - 1, $per_page) : '#'; ?>">Prev</a>
+                                        </li>
+                                        <?php for ($p = 1; $p <= $pages; $p++): ?>
+                                            <li class="page-item <?php echo $p == $page ? 'active' : ''; ?>">
+                                                <a class="page-link h-44 w-44 flex-center text-15 rounded-8 fw-medium" href="<?php echo $build_page_link($p, $per_page); ?>"><?php echo $p; ?></a>
+                                            </li>
+                                        <?php endfor; ?>
+                                        <li class="page-item <?php echo $page >= $pages ? 'disabled' : ''; ?>">
+                                            <a class="page-link h-44 w-44 flex-center text-15 rounded-8 fw-medium" href="<?php echo $page < $pages ? $build_page_link($page + 1, $per_page) : '#'; ?>">Next</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <?php endif; ?>
                             </div>
                         </div>
                     </div>
                 </div>
 
             <?php elseif ($action == 'add' || $action == 'edit'): 
-                if ($user_role !== 'super_admin') {
+                if (!can($action == 'add' ? 'lectures.create' : 'lectures.edit')) {
                     flash_message('You do not have permission to manage lectures.', 'error');
                     redirect('lectures.php');
+                }
+
+                $selected_syllabus_id_for_form = isset($lecture->syllabus_id) ? (int)$lecture->syllabus_id : 0;
+                if ($action == 'add' && $syllabus_filter > 0 && canAccessSyllabusForLectureForm($lecture, $syllabus_filter, $can_access_all_classes_flag, $accessible_class_ids)) {
+                    $selected_syllabus_id_for_form = $syllabus_filter;
+                }
+
+                $lecture_order_value = isset($lecture->lecture_order) ? (int)$lecture->lecture_order : 1;
+                if ($action == 'add' && $selected_syllabus_id_for_form > 0) {
+                    $lecture_order_value = $lecture->getNextOrder($selected_syllabus_id_for_form);
                 }
             ?>
                 <div class="card">
@@ -706,7 +852,7 @@ $flash = get_flash_message();
                                 <div class="col-md-4">
                                     <label for="lecture_order" class="form-label">Order</label>
                                     <input type="number" class="form-control" id="lecture_order" name="lecture_order" 
-                                           value="<?php echo isset($lecture->lecture_order) ? $lecture->lecture_order : '1'; ?>" 
+                                           value="<?php echo $lecture_order_value; ?>" 
                                            min="1">
                                 </div>
                             </div>
@@ -714,12 +860,12 @@ $flash = get_flash_message();
                             <div class="row g-20 mt-20">
                                 <div class="col-md-8">
                                     <label for="syllabus_id" class="form-label">Syllabus *</label>
-                                    <select class="form-select" id="syllabus_id" name="syllabus_id" required>
+                                    <select class="form-select" id="syllabus_id" name="syllabus_id" onchange="updateLectureOrder()" required>
                                         <option value="">Select a syllabus</option>
                                         <?php
                                         $syllabi_stmt = $lecture->getActiveSyllabi($can_access_all_classes_flag ? [] : $accessible_class_ids);
                                         while ($syllabus_row = $syllabi_stmt->fetch()) {
-                                            $selected = (isset($lecture->syllabus_id) && $lecture->syllabus_id == $syllabus_row['id']) ? 'selected' : '';
+                                            $selected = ($selected_syllabus_id_for_form === (int)$syllabus_row['id']) ? 'selected' : '';
                                             echo "<option value='" . $syllabus_row['id'] . "' ". $selected . ">" . 
                                                  htmlspecialchars($syllabus_row['class_name']) . " - " .
                                                  htmlspecialchars($syllabus_row['subject_name']) . " - " .
@@ -818,6 +964,32 @@ $flash = get_flash_message();
                                             <label for="pptx_content" class="form-label">PowerPoint URL or Embed Code</label>
                                             <textarea class="form-control" id="pptx_content" name="pptx_content" rows="4" placeholder="Enter Google Slides embed URL, PowerPoint online URL, or iframe code"></textarea>
                                             <small class="text-muted">Paste URL or full iframe embed code (e.g., from Google Slides, Office 365, SlideShare)</small>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- iSpring Format -->
+                                <div class="card mb-20">
+                                    <div class="card-body">
+                                        <div class="form-check mb-3">
+                                            <input class="form-check-input" type="checkbox" id="enable_ispring" name="enable_ispring" value="1">
+                                            <label class="form-check-label fw-bold" for="enable_ispring">
+                                                <i class="ph ph-desktop text-info me-2"></i> Include iSpring HTML5 Package
+                                            </label>
+                                        </div>
+                                        <div id="ispring_upload_section" style="display: none;">
+                                            <label for="ispring_file" class="form-label">Upload iSpring ZIP Package</label>
+                                            <input type="file" class="form-control" id="ispring_file" name="ispring_file" accept=".zip">
+                                            <small class="text-muted">Upload the ZIP file exported from iSpring Converter. It will be extracted automatically.</small>
+                                            <div class="alert alert-info mt-3 mb-0">
+                                                <strong>How to prepare:</strong>
+                                                <ol class="mb-0 mt-2 ps-3">
+                                                    <li>Convert your PPTX using iSpring Converter</li>
+                                                    <li>Publish as HTML5</li>
+                                                    <li>ZIP the entire output folder</li>
+                                                    <li>Upload the ZIP package here</li>
+                                                </ol>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -990,6 +1162,10 @@ $flash = get_flash_message();
                                                         $icon_class = 'ph-presentation';
                                                         $label = 'PowerPoint';
                                                         break;
+                                                    case 'ispring':
+                                                        $icon_class = 'ph-desktop';
+                                                        $label = 'Interactive';
+                                                        break;
                                                     case 'video':
                                                         $icon_class = 'ph-video-camera';
                                                         $label = 'Video';
@@ -1071,6 +1247,25 @@ $flash = get_flash_message();
                                                                class="btn btn-outline-main rounded-pill" 
                                                                target="_blank">
                                                                 <i class="ph ph-arrow-square-out me-2"></i>Open in New Tab
+                                                            </a>
+                                                        </div>
+                                                    </div>
+
+                                                <?php elseif ($file['file_type'] == 'ispring'): ?>
+                                                    <div class="mb-20">
+                                                        <div class="ratio ratio-16x9 rounded-16 overflow-hidden">
+                                                            <iframe src="<?php echo htmlspecialchars($file['file_url']); ?>"
+                                                                    width="100%"
+                                                                    height="100%"
+                                                                    style="border: none;"
+                                                                    allowfullscreen>
+                                                            </iframe>
+                                                        </div>
+                                                        <div class="mt-3 text-center">
+                                                            <a href="<?php echo htmlspecialchars($file['file_url']); ?>"
+                                                               class="btn btn-outline-main rounded-pill"
+                                                               target="_blank">
+                                                                <i class="ph ph-arrow-square-out me-2"></i>Open in Full Screen
                                                             </a>
                                                         </div>
                                                     </div>
@@ -1244,26 +1439,31 @@ $flash = get_flash_message();
                                                     <?php 
                                                     echo $file['file_type'] == 'pdf' ? 'ph-file-pdf text-danger' : 
                                                          ($file['file_type'] == 'pptx' ? 'ph-presentation text-warning' : 
+                                                         ($file['file_type'] == 'ispring' ? 'ph-desktop text-info' :
                                                          ($file['file_type'] == 'video' ? 'ph-video-camera text-success' : 
                                                          ($file['file_type'] == 'audio' ? 'ph-speaker-high text-primary' : 
-                                                         'ph-article text-info')));
+                                                         'ph-article text-info'))));
                                                     ?>
                                                 "></i>
-                                                <span class="text-13"><?php echo ucfirst($file['file_type']); ?></span>
+                                                <span class="text-13"><?php echo $file['file_type'] === 'ispring' ? 'Interactive' : ucfirst($file['file_type']); ?></span>
                                             </div>
                                         <?php endforeach; ?>
                                     </div>
                                 </div>
                                 <?php endif; ?>
 
-                                <?php if ($user_role === 'super_admin'): ?>
+                                <?php if (can('lectures.edit') || can('lectures.delete')): ?>
                                 <div class="flex-column gap-8">
+                                    <?php if (can('lectures.edit')): ?>
                                     <a href="lectures.php?action=edit&id=<?php echo $lecture->id; ?>" class="btn btn-outline-main rounded-pill w-100">
                                         <i class="ph ph-pencil me-2"></i>Edit Lecture
                                     </a>
+                                    <?php endif; ?>
+                                    <?php if (can('lectures.delete')): ?>
                                     <button onclick="confirmDelete(<?php echo $lecture->id; ?>, '<?php echo htmlspecialchars($lecture->lecture_title); ?>')" class="btn btn-outline-danger rounded-pill w-100">
                                         <i class="ph ph-trash me-2"></i>Delete Lecture
                                     </button>
+                                    <?php endif; ?>
                                 </div>
                                 <?php endif; ?>
                             </div>
@@ -1429,6 +1629,42 @@ $flash = get_flash_message();
             }
         }
 
+        function updateLectureOrder() {
+            const syllabusSelect = document.getElementById('syllabus_id');
+            const orderInput = document.getElementById('lecture_order');
+            const actionInput = document.querySelector('input[name="action"]');
+
+            if (!syllabusSelect || !orderInput || !actionInput || actionInput.value !== 'create') {
+                return;
+            }
+
+            const syllabusId = syllabusSelect.value;
+            if (!syllabusId) {
+                orderInput.value = '1';
+                return;
+            }
+
+            fetch('lectures.php?ajax=get_next_order&syllabus_id=' + encodeURIComponent(syllabusId), {
+                headers: {
+                    'Accept': 'application/json'
+                }
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Unable to load next lecture order.');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.next_order) {
+                        orderInput.value = data.next_order;
+                    }
+                })
+                .catch(error => {
+                    console.error(error);
+                });
+        }
+
         // Format selector for view page
         function switchFormat(lectureId, format) {
             // Hide all format contents
@@ -1459,10 +1695,17 @@ $flash = get_flash_message();
             if (document.getElementById('lecture_type')) {
                 toggleContentFields();
             }
+
+            const syllabusSelect = document.getElementById('syllabus_id');
+            const actionInput = document.querySelector('input[name="action"]');
+            if (syllabusSelect && syllabusSelect.value && actionInput && actionInput.value === 'create') {
+                updateLectureOrder();
+            }
             
             // Initialize multiple format checkboxes
             toggleUploadSection('enable_pdf', 'pdf_upload_section');
             toggleUploadSection('enable_pptx', 'pptx_upload_section');
+            toggleUploadSection('enable_ispring', 'ispring_upload_section');
             toggleUploadSection('enable_video', 'video_upload_section');
             toggleUploadSection('enable_audio', 'audio_upload_section');
             toggleUploadSection('enable_text', 'text_upload_section');

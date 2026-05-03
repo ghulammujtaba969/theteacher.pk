@@ -7,7 +7,7 @@ require_once 'classes/ClassModel.php';
 require_once 'classes/BatchEnrollment.php';
 require_once 'classes/ClassInquiry.php';
 
-require_roles(['solo_student','student']);
+require_any_permission(['classes.view', 'courses.view', 'lectures.view', 'enrollments.self_enroll'], 'dashboard.php');
 
 $current_user = current_user();
 

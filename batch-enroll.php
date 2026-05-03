@@ -11,6 +11,9 @@ require_once 'classes/ClassModel.php';
 if (!is_logged_in()) {
     redirect('login.php');
 }
+if (!can('enrollments.self_enroll') && !can('enrollments.manage')) {
+    permission_denied('courses.php');
+}
 
 $current_user = current_user();
 $user_role = $_SESSION['role'] ?? '';

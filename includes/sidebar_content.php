@@ -13,7 +13,7 @@
     <a class="nav-link text-white d-flex align-items-center rounded py-2 mb-2 <?php echo ($current_page == 'dashboard') ? 'active-link' : ''; ?>" href="dashboard.php">
         <i class="fas fa-tachometer-alt me-2"></i>Dashboard
     </a>
-    <?php if (in_array($user_role, ['super_admin', 'organization_admin', 'school_admin', 'teacher'])): ?>
+    <?php if (can('classes.view')): ?>
     <a class="nav-link text-white d-flex align-items-center rounded py-2 mb-2 <?php echo ($current_page == 'classes') ? 'active-link' : ''; ?>" href="classes.php">
         <i class="fas fa-school me-2"></i>My Classes
     </a>
@@ -34,44 +34,54 @@
     <hr class="my-3 border-light opacity-50">
     <?php endif; ?>
 
-    <?php if (in_array($user_role, ['super_admin', 'organization_admin', 'school_admin', 'teacher', 'solo_student'])): ?>
+    <?php if (can_any(['subjects.view', 'syllabi.view', 'lectures.view'])): ?>
+    <?php if (can('subjects.view')): ?>
     <a class="nav-link text-white d-flex align-items-center rounded py-2 mb-2 <?php echo ($current_page == 'subjects') ? 'active-link' : ''; ?>" href="subjects.php">
         <i class="fas fa-book me-2"></i>Subjects
     </a>
+    <?php endif; ?>
+    <?php if (can('syllabi.view')): ?>
     <a class="nav-link text-white d-flex align-items-center rounded py-2 mb-2 <?php echo ($current_page == 'syllabi') ? 'active-link' : ''; ?>" href="syllabi.php">
         <i class="fas fa-list-alt me-2"></i>Syllabi
     </a>
+    <?php endif; ?>
+    <?php if (can('lectures.view')): ?>
     <a class="nav-link text-white d-flex align-items-center rounded py-2 mb-2 <?php echo ($current_page == 'lectures') ? 'active-link' : ''; ?>" href="lectures.php">
         <i class="fas fa-play-circle me-2"></i>Lectures
     </a>
     <?php endif; ?>
+    <?php endif; ?>
     <a class="nav-link text-white d-flex align-items-center rounded py-2 mb-2 <?php echo ($current_page == 'profile') ? 'active-link' : ''; ?>" href="profile.php">
         <i class="fas fa-user me-2"></i>My Profile
     </a>
-    <?php if (in_array($user_role, ['super_admin', 'organization_admin', 'school_admin'])): ?>
+    <?php if (can('users.view')): ?>
     <a class="nav-link text-white d-flex align-items-center rounded py-2 mb-2 <?php echo ($current_page == 'users') ? 'active-link' : ''; ?>" href="users.php">
         <i class="fas fa-users me-2"></i>Users
     </a>
     <?php endif; ?>
-    <?php if ($user_role === 'super_admin'): ?>
+    <?php if (can('organizations.view')): ?>
     <a class="nav-link text-white d-flex align-items-center rounded py-2 mb-2 <?php echo ($current_page == 'organizations') ? 'active-link' : ''; ?>" href="organizations.php">
         <i class="fas fa-building me-2"></i>Organizations
     </a>
     <?php endif; ?>
-    <?php if (in_array($user_role, ['super_admin', 'organization_admin'])): ?>
+    <?php if (can('schools.view') || can('class_access.view')): ?>
+    <?php if (can('schools.view')): ?>
     <a class="nav-link text-white d-flex align-items-center rounded py-2 mb-2 <?php echo ($current_page == 'schools') ? 'active-link' : ''; ?>" href="schools.php">
         <i class="fas fa-school me-2"></i>Schools
     </a>
+    <?php endif; ?>
+    <?php if (can('class_access.view')): ?>
     <a class="nav-link text-white d-flex align-items-center rounded py-2 mb-2 <?php echo ($current_page == 'class-access') ? 'active-link' : ''; ?>" href="class-access.php">
         <i class="fas fa-key me-2"></i>Class Access
     </a>
     <?php endif; ?>
-    <?php if ($user_role === 'super_admin'): // New condition for pptx_page_manager.php ?>
+    <?php endif; ?>
+    <?php if (can('pptx.manage')): ?>
     <a class="nav-link text-white d-flex align-items-center rounded py-2 mb-2 <?php echo ($current_page == 'pptx_page_manager') ? 'active-link' : ''; ?>" href="pptx_page_manager.php">
         <i class="fas fa-file-powerpoint me-2"></i>PPTX Page Manager
     </a>
     <?php endif; ?>
-    <?php if ($user_role === 'super_admin'): // New condition for pptx_page_manager.php ?>
+    <?php if (can('pending_registrations.view')): ?>
     <a class="nav-link text-white d-flex align-items-center rounded py-2 mb-2 <?php echo ($current_page == 'pending_registrations') ? 'active-link' : ''; ?>" href="pending_registrations.php">
         <i class="fas fa-file-powerpoint me-2"></i>Pending Registrations
     </a>

@@ -260,6 +260,9 @@ class User {
                 'school_id' => $existing_user['school_id'] ?? null,
                 'can_access_all_classes' => $existing_user['can_access_all_classes'] ?? 0,
                 'status' => $existing_user['status'] ?? null,
+                'phone' => $existing_user['phone'] ?? null,
+                'gender' => $existing_user['gender'] ?? null,
+                'address' => $existing_user['address'] ?? null,
             ];
 
             // Merge existing defaults with new data, prioritizing new data
@@ -267,7 +270,7 @@ class User {
             $merged_data = array_merge($default_data, $data);
 
             $query = "UPDATE users 
-                     SET username = ?, email = ?, full_name = ?, role_id = ?, organization_id = ?, school_id = ?, can_access_all_classes = ?, status = ?
+                     SET username = ?, email = ?, full_name = ?, role_id = ?, organization_id = ?, school_id = ?, can_access_all_classes = ?, status = ?, phone = ?, gender = ?, address = ?
                      WHERE id = ?";
             $stmt = $this->db->prepare($query);
             return $stmt->execute([
@@ -279,6 +282,9 @@ class User {
                 $merged_data['school_id'],
                 $merged_data['can_access_all_classes'],
                 $merged_data['status'],
+                $merged_data['phone'],
+                $merged_data['gender'],
+                $merged_data['address'],
                 $id
             ]);
         } catch (PDOException $e) {
@@ -354,10 +360,10 @@ class User {
         
         $target_user_role_name = $target_user['role_name'];
 
-        // An Organization Admin can manage School Admins, Teachers, and Solo Students within their organization
+        // An Organization Admin can manage school-level users within their organization
         if ($current_user_role_name === 'Organization Admin') {
             return $target_user['organization_id'] == $current_user['organization_id'] && 
-                   in_array($target_user_role_name, ['School Admin', 'Teacher', 'Solo Student']);
+                   in_array($target_user_role_name, ['School Admin', 'Teacher', 'Solo Student', 'Student']);
         }
         
         // A School Admin can manage Teachers and Solo Students within their school

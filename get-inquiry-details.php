@@ -14,9 +14,8 @@ if (!is_logged_in()) {
 }
 
 $current_user = current_user();
-$allowed_roles = ['Super Admin', 'Organization Admin', 'School Admin'];
 
-if (!in_array($current_user['role_name'], $allowed_roles)) {
+if (!can('inquiries.view')) {
     echo json_encode(['error' => 'Insufficient permissions']);
     exit;
 }

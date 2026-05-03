@@ -6,8 +6,7 @@ require_once 'includes/functions.php';
 require_once 'classes/User.php'; // Include User class
 require_once 'classes/ClassModel.php'; // Include ClassModel for class filtering
 
-// Check if user is logged in
-require_roles(['super_admin', 'organization_admin', 'school_admin', 'teacher', 'solo_student']);
+require_permission('syllabi.view', 'dashboard.php');
 
 $current_user = current_user();
 $user_role = $_SESSION['role'] ?? '';
@@ -29,6 +28,9 @@ $action = isset($_GET['action']) ? $_GET['action'] : 'list';
 $syllabus_id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 $subject_filter = isset($_GET['subject']) ? (int)$_GET['subject'] : 0;
 $class_filter = isset($_GET['class']) ? (int)$_GET['class'] : 0;
+
+if ($action === 'add' && !can('syllabi.create')) permission_denied('syllabi.php');
+if ($action === 'edit' && !can('syllabi.edit')) permission_denied('syllabi.php');
 
 // Handle AJAX request for subjects by class
 if (isset($_GET['ajax']) && $_GET['ajax'] == 'get_subjects' && isset($_GET['class_id'])) {
@@ -55,6 +57,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (isset($_POST['action'])) {
         switch ($_POST['action']) {
             case 'create':
+                if (!can('syllabi.create')) permission_denied('syllabi.php');
                 $syllabus->syllabus_title = sanitize_input($_POST['syllabus_title']);
                 $syllabus->subject_id = (int)$_POST['subject_id'];
                 $syllabus->description = sanitize_input($_POST['description']);
@@ -84,6 +87,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 break;
 
             case 'update':
+                if (!can('syllabi.edit')) permission_denied('syllabi.php');
                 $syllabus->id = (int)$_POST['id'];
                 $syllabus->syllabus_title = sanitize_input($_POST['syllabus_title']);
                 $syllabus->subject_id = (int)$_POST['subject_id'];
@@ -114,6 +118,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 break;
 
             case 'delete':
+                if (!can('syllabi.delete')) permission_denied('syllabi.php');
                 $syllabus->id = (int)$_POST['id'];
                 if ($syllabus->delete()) {
                     flash_message('Syllabus deleted successfully!', 'success');
@@ -283,7 +288,7 @@ $flash = get_flash_message();
                                 </div>
                             </div>
                             
-                            <?php if ($user_role === 'super_admin'): ?>
+                            <?php if (can('syllabi.create')): ?>
                             <a href="syllabi.php?action=add" class="btn btn-main rounded-pill py-7 flex-align gap-4 fw-normal">
                                 <span class="d-flex text-md"><i class="ph ph-plus"></i></span> 
                                 Create New Syllabus
@@ -300,9 +305,18 @@ $flash = get_flash_message();
                                     } else {
                                         $stmt = $syllabus->read($can_access_all_classes_flag ? [] : $accessible_class_ids);
                                     }
+
+                                    $syllabus_rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                                    $per_page = isset($_GET['pp']) ? max(6, min(60, (int)$_GET['pp'])) : 12;
+                                    $page = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
+                                    $total = count($syllabus_rows);
+                                    $pages = max(1, (int)ceil($total / $per_page));
+                                    if ($page > $pages) { $page = $pages; }
+                                    $offset = ($page - 1) * $per_page;
+                                    $paged_syllabi = array_slice($syllabus_rows, $offset, $per_page);
                                     
-                                    if ($stmt->rowCount() > 0) {
-                                        while ($row = $stmt->fetch()) {
+                                    if ($total > 0) {
+                                        foreach ($paged_syllabi as $row) {
                                             echo "<div class='col-xxl-3 col-lg-4 col-sm-6'>";
                                             echo "<div class='card border border-gray-100'>";
                                             echo "<div class='card-body p-8'>";
@@ -346,7 +360,7 @@ $flash = get_flash_message();
                                             }
 
                                             echo "<div class='mt-16'>";
-                                            if ($user_role === 'super_admin') {
+                                            if (can('syllabi.edit')) {
                                                 echo "<div class='d-flex flex-wrap gap-8 align-items-center mb-8 syllabus-action-buttons'>";
                                                 echo "<a href='syllabi.php?action=edit&id=" . $row['id'] . "' class='btn btn-outline-main rounded-pill py-9 px-16 text-14 fw-medium syllabus-btn-edit'>";
                                                 echo "<i class='ph ph-pencil me-2'></i>Edit</a>";
@@ -389,7 +403,7 @@ $flash = get_flash_message();
                                         if ($subject_filter) {
                                             echo "<h5 class='text-gray-600 mb-8'>No Syllabi Found for This Subject</h5>";
                                             echo "<p class='text-gray-400'>No syllabi have been created for the selected subject yet.";
-                                            if ($user_role === 'super_admin') {
+                                            if (can('syllabi.create')) {
                                                 echo " <a href='syllabi.php?action=add' class='text-main-600'>Create the first syllabus</a>";
                                             }
                                             echo "</p>";
@@ -397,7 +411,7 @@ $flash = get_flash_message();
                                         } else {
                                             echo "<h5 class='text-gray-600 mb-8'>No Syllabi Found</h5>";
                                             echo "<p class='text-gray-400'>You don't have any syllabi assigned yet.";
-                                            if ($user_role === 'super_admin') {
+                                            if (can('syllabi.create')) {
                                                 echo " <a href='syllabi.php?action=add' class='text-main-600'>Create your first syllabus</a>";
                                             }
                                             echo "</p>";
@@ -407,6 +421,34 @@ $flash = get_flash_message();
                                     }
                                     ?>
                                 </div>
+                                <?php if ($total > 0): ?>
+                                <div class="card-footer flex-between flex-wrap mt-24 px-0 pb-0">
+                                    <?php
+                                        $start_i = $offset + 1;
+                                        $end_i = min($offset + $per_page, $total);
+                                        $qs = $_GET;
+                                        unset($qs['page'], $qs['pp']);
+                                        $base = basename($_SERVER['PHP_SELF']) . (empty($qs) ? '' : ('?' . http_build_query($qs)));
+                                        $build_page_link = function ($p, $pp) use ($base) {
+                                            return $base . (strpos($base, '?') !== false ? '&' : '?') . 'page=' . $p . '&pp=' . $pp;
+                                        };
+                                    ?>
+                                    <span class="text-gray-900">Showing <?php echo $start_i; ?> to <?php echo $end_i; ?> of <?php echo $total; ?> syllabi</span>
+                                    <ul class="pagination flex-align flex-wrap">
+                                        <li class="page-item <?php echo $page <= 1 ? 'disabled' : ''; ?>">
+                                            <a class="page-link h-44 w-44 flex-center text-15 rounded-8 fw-medium" href="<?php echo $page > 1 ? $build_page_link($page - 1, $per_page) : '#'; ?>">Prev</a>
+                                        </li>
+                                        <?php for ($p = 1; $p <= $pages; $p++): ?>
+                                            <li class="page-item <?php echo $p == $page ? 'active' : ''; ?>">
+                                                <a class="page-link h-44 w-44 flex-center text-15 rounded-8 fw-medium" href="<?php echo $build_page_link($p, $per_page); ?>"><?php echo $p; ?></a>
+                                            </li>
+                                        <?php endfor; ?>
+                                        <li class="page-item <?php echo $page >= $pages ? 'disabled' : ''; ?>">
+                                            <a class="page-link h-44 w-44 flex-center text-15 rounded-8 fw-medium" href="<?php echo $page < $pages ? $build_page_link($page + 1, $per_page) : '#'; ?>">Next</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <?php endif; ?>
                             </div>
                         </div>
                     </div>
@@ -414,7 +456,7 @@ $flash = get_flash_message();
 
             <?php elseif ($action == 'add' || $action == 'edit'): 
                 // Only authorized users can add/edit syllabi
-                if ($user_role !== 'super_admin') {
+                if (!can($action == 'add' ? 'syllabi.create' : 'syllabi.edit')) {
                     flash_message('You do not have permission to manage syllabi.', 'error');
                     redirect('syllabi.php');
                 }

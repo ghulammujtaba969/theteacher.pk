@@ -6,8 +6,7 @@ require_once 'classes/User.php';
 require_once 'classes/ClassModel.php';
 require_once 'classes/Role.php';
 
-// Check if user is logged in and has permission to manage organizations
-require_roles(['super_admin']);
+require_permission('organizations.view', 'dashboard.php');
 
 $database = new Database();
 $db = $database->getConnection();
@@ -37,6 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['action'])) {
         switch ($_POST['action']) {
             case 'create':
+                if (!can('organizations.create')) permission_denied('organizations.php');
                 $data = [
                     'name' => trim($_POST['name']),
                     'description' => trim($_POST['description']),
@@ -75,6 +75,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 break;
                 
             case 'update':
+                if (!can('organizations.edit')) permission_denied('organizations.php');
                 $org_id = $_POST['org_id'];
                 $data = [
                     'name' => trim($_POST['name']),
@@ -141,6 +142,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 break;
                 
             case 'delete':
+                if (!can('organizations.delete')) permission_denied('organizations.php');
                 $org_id = $_POST['org_id'];
                 if ($organization->delete($org_id)) {
                     flash_message('Organization deleted successfully!', 'success');

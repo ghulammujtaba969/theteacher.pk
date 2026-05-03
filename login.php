@@ -44,6 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             // Also store full user array for pages expecting it
             $_SESSION['user'] = $loggedInUser;
+            unset($_SESSION['_permissions']);
 
             // Redirect to dashboard
             redirect('dashboard.php');

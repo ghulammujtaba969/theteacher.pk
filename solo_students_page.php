@@ -6,9 +6,7 @@ require_once 'classes/ClassModel.php';
 require_once 'classes/ClassAccess.php';
 
 // Check if user is logged in
-if (!is_logged_in()) {
-    redirect('login.php');
-}
+require_permission('solo_students.view', 'dashboard.php');
 
 $database = new Database();
 $db = $database->getConnection();
@@ -16,12 +14,6 @@ $current_user = current_user();
 $user = new User($db);
 $classModel = new ClassModel($db);
 $classAccess = new ClassAccess($db);
-
-// Check permissions - only Super Admin, Organization Admin, and School Admin can manage users
-$allowed_roles = ['Super Admin', 'Organization Admin', 'School Admin'];
-if (!in_array($current_user['role_name'], $allowed_roles)) {
-    redirect('dashboard.php');
-}
 
 $message = '';
 $error = '';
@@ -31,6 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['action'])) {
         switch ($_POST['action']) {
             case 'assign_classes':
+                if (!can('solo_students.manage')) permission_denied('solo_students_page.php');
                 if (isset($_POST['selected_students']) && isset($_POST['selected_classes'])) {
                     $selected_students = $_POST['selected_students'];
                     $selected_classes = $_POST['selected_classes'];
@@ -57,6 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 break;
                 
             case 'remove_class_access':
+                if (!can('solo_students.manage')) permission_denied('solo_students_page.php');
                 $student_id = $_POST['student_id'];
                 $class_id = $_POST['class_id'];
                 

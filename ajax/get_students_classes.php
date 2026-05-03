@@ -16,9 +16,7 @@ $db = $database->getConnection();
 $current_user = current_user();
 $classAccess = new ClassAccess($db);
 
-// Check permissions
-$allowed_roles = ['Super Admin', 'Organization Admin', 'School Admin'];
-if (!in_array($current_user['role_name'], $allowed_roles)) {
+if (!can('solo_students.view') && !can('class_access.view')) {
     http_response_code(403);
     echo '<p class="text-danger">Access denied.</p>';
     exit;

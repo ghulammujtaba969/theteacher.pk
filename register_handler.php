@@ -19,7 +19,7 @@ function getPDO() {
         require_once __DIR__.'/config.php';
     }
     $host = defined('DB_HOST') ? DB_HOST : '127.0.0.1';
-    $port = defined('DB_PORT') ? DB_PORT : '3307';
+    $port = defined('DB_PORT') ? DB_PORT : '3306';
     $db   = defined('DB_NAME') ? DB_NAME : 'u921830511_syllabusms';
     $user = defined('DB_USER') ? DB_USER : 'root';
     $pass = defined('DB_PASS') ? DB_PASS : '';

@@ -15,6 +15,7 @@ require_once 'classes/DashboardStats.php';
 if (!is_logged_in()) {
     redirect('login.php');
 }
+require_permission('dashboard.view');
 
 $current_user = current_user();
 $user_role = $_SESSION['role'] ?? '';

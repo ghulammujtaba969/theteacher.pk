@@ -5,8 +5,7 @@ require_once 'classes/ZoomMeeting.php';
 require_once 'includes/functions.php';
 require_once 'classes/User.php';
 
-// Check if user is logged in
-require_roles(['super_admin', 'organization_admin', 'school_admin', 'teacher', 'solo_student']);
+require_permission('zoom.view', 'dashboard.php');
 
 $current_user = current_user();
 $user_role = $_SESSION['role'] ?? '';
@@ -25,11 +24,12 @@ $action = isset($_GET['action']) ? $_GET['action'] : 'list';
 $meeting_id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 
 
-// Handle form submissions (only super admin)
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && $user_role === 'super_admin') {
+// Handle form submissions
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (isset($_POST['action'])) {
         switch ($_POST['action']) {
             case 'create':
+                if (!can('zoom.create')) permission_denied('zoom-meetings.php');
                 $zoomMeeting->meeting_title = sanitize_input($_POST['meeting_title']);
                 $zoomMeeting->meeting_description = sanitize_input($_POST['meeting_description']);
                 $zoomMeeting->class_id = !empty($_POST['class_id']) ? (int)$_POST['class_id'] : null;
@@ -123,6 +123,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $user_role === 'super_admin') {
                 break;
 
             case 'update':
+                if (!can('zoom.edit')) permission_denied('zoom-meetings.php');
                 $zoomMeeting->id = (int)$_POST['id'];
                 
                 // Load existing meeting data first
@@ -217,6 +218,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $user_role === 'super_admin') {
                 break;
 
             case 'delete':
+                if (!can('zoom.delete')) permission_denied('zoom-meetings.php');
                 $zoomMeeting->id = (int)$_POST['id'];
                 
                 // Load meeting data
@@ -243,6 +245,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $user_role === 'super_admin') {
 }
 // Get meeting data for edit
 if ($action == 'edit' && $meeting_id > 0) {
+    if (!can('zoom.edit')) permission_denied('zoom-meetings.php');
     $zoomMeeting->id = $meeting_id;
     if (!$zoomMeeting->readOne()) {
         flash_message('Meeting not found.', 'error');
@@ -478,7 +481,7 @@ $flash = get_flash_message();
                                 </li>
                             </ul>
                             
-                            <?php if ($user_role === 'super_admin'): ?>
+                            <?php if (can('zoom.create')): ?>
                             <a href="zoom-meetings.php?action=add" class="btn btn-main rounded-pill py-7 flex-align gap-4 fw-normal">
                                 <span class="d-flex text-md"><i class="ph ph-plus"></i></span> 
                                 Schedule New Meeting
@@ -585,7 +588,7 @@ $flash = get_flash_message();
                                         <?php endif; ?>
                                         
                                         <div class="flex-between gap-8">
-                                            <?php if (!empty($row['meeting_url'])): ?>
+                                            <?php if (!empty($row['meeting_url']) && can('zoom.join')): ?>
                                             <div class="flex-grow-1 d-flex gap-8">
                                                 <a href="<?php echo htmlspecialchars($row['meeting_url']); ?>" target="_blank" class="btn btn-main rounded-pill py-6 px-16 flex-grow-1">
                                                     <i class="ph ph-video-camera me-2"></i>Join Meeting
@@ -601,14 +604,18 @@ $flash = get_flash_message();
                                             <span class="text-13 text-gray-500 flex-grow-1">No meeting link available</span>
                                             <?php endif; ?>
                                             
-                                            <?php if ($user_role === 'super_admin'): ?>
+                                            <?php if (can('zoom.edit') || can('zoom.delete')): ?>
                                             <div class="flex-align gap-4">
+                                                <?php if (can('zoom.edit')): ?>
                                                 <a href="zoom-meetings.php?action=edit&id=<?php echo $row['id']; ?>" class="w-32 h-32 flex-center bg-success-50 text-success-600 rounded-circle hover-bg-success-600 hover-text-white">
                                                     <i class="ph ph-pencil"></i>
                                                 </a>
+                                                <?php endif; ?>
+                                                <?php if (can('zoom.delete')): ?>
                                                 <button onclick="confirmDelete(<?php echo $row['id']; ?>, '<?php echo htmlspecialchars($row['meeting_title'], ENT_QUOTES); ?>')" class="w-32 h-32 flex-center bg-danger-50 text-danger-600 rounded-circle hover-bg-danger-600 hover-text-white border-0">
                                                     <i class="ph ph-trash"></i>
                                                 </button>
+                                                <?php endif; ?>
                                             </div>
                                             <?php endif; ?>
                                         </div>
@@ -649,7 +656,7 @@ $flash = get_flash_message();
                                 echo '<i class="ph ph-video-camera text-6xl text-gray-400 mb-16 d-block"></i>';
                                 echo '<h5 class="text-gray-500 mb-8">No Meetings Scheduled</h5>';
                                 echo '<p class="text-gray-400">There are no Zoom meetings scheduled at the moment.</p>';
-                                if ($user_role === 'super_admin') {
+                                if (can('zoom.create')) {
                                     echo '<a href="zoom-meetings.php?action=add" class="btn btn-main rounded-pill mt-16">Schedule First Meeting</a>';
                                 }
                                 echo '</div>';
@@ -661,8 +668,7 @@ $flash = get_flash_message();
                 </div>
 
             <?php elseif ($action == 'add' || $action == 'edit'): 
-                // Only super admin can access create/edit
-                if ($user_role !== 'super_admin') {
+                if (!can($action == 'add' ? 'zoom.create' : 'zoom.edit')) {
                     flash_message('You do not have permission to manage meetings.', 'error');
                     redirect('zoom-meetings.php');
                 }

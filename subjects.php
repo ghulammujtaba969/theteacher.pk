@@ -14,8 +14,7 @@ $accessible_classes_raw = $user->getAccessibleClasses($current_user);
 $accessible_class_ids = array_column($accessible_classes_raw, 'id');
 $can_access_all_classes_flag = ($current_user['can_access_all_classes'] ?? 0) == 1;
 
-// Check if user is logged in and is super admin
-require_roles(['super_admin', 'organization_admin', 'school_admin', 'teacher', 'solo_student']);
+require_permission('subjects.view', 'dashboard.php');
 
 $user_role = $_SESSION['role'] ?? '';
 $database = new Database();
@@ -25,6 +24,9 @@ $subject = new Subject($db);
 $action = isset($_GET['action']) ? $_GET['action'] : 'list';
 $subject_id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 $class_filter = isset($_GET['class']) ? (int)$_GET['class'] : 0;
+
+if ($action === 'add' && !can('subjects.create')) permission_denied('subjects.php');
+if ($action === 'edit' && !can('subjects.edit')) permission_denied('subjects.php');
 
 // Function to handle image upload
 function handleImageUpload($file, $old_image = null) {
@@ -74,6 +76,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (isset($_POST['action'])) {
         switch ($_POST['action']) {
             case 'create':
+                if (!can('subjects.create')) permission_denied('subjects.php');
                 try {
                     $subject->subject_name = sanitize_input($_POST['subject_name']);
                     $subject->subject_code = sanitize_input($_POST['subject_code']);
@@ -116,6 +119,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 break;
 
             case 'update':
+                if (!can('subjects.edit')) permission_denied('subjects.php');
                 try {
                     $subject->id = (int)$_POST['id'];
                     
@@ -173,6 +177,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 break;
 
             case 'delete':
+                if (!can('subjects.delete')) permission_denied('subjects.php');
                 $subject->id = (int)$_POST['id'];
                 if ($subject->delete()) {
                     flash_message('Subject deleted successfully!', 'success');
@@ -350,7 +355,7 @@ $flash = get_flash_message();
                                 </div>
                             </div>
                             
-                            <?php if ($user_role === 'super_admin'): ?>
+                            <?php if (can('subjects.create')): ?>
                             <a href="subjects.php?action=add" class="btn btn-main rounded-pill py-7 flex-align gap-4 fw-normal">
                                 <span class="d-flex text-md"><i class="ph ph-plus"></i></span> 
                                 Create New Subject
@@ -411,7 +416,7 @@ $flash = get_flash_message();
 
                                             echo "<div class='flex-between gap-8 mt-16'>";
                                             echo "<div class='flex-align gap-8'>";
-                                            if ($user_role === 'super_admin') {
+                                            if (can('subjects.edit')) {
                                                 echo "<a href='subjects.php?action=edit&id=" . $row['id'] . "' class='btn btn-outline-main rounded-pill py-6 px-12 text-13'>Edit</a>";
                                                 echo "<button type='button' class='btn btn-danger rounded-pill py-6 px-12 text-13' onclick='confirmDelete(" . $row['id'] . ", \"" . htmlspecialchars($row['subject_name']) . "\")'>Delete</button>";
                                             } else {
@@ -434,7 +439,7 @@ $flash = get_flash_message();
                                         if ($class_filter) {
                                             echo "<h5 class='text-gray-600 mb-8'>No Subjects Found in This Class</h5>";
                                             echo "<p class='text-gray-400'>No subjects have been created for the selected class yet.";
-                                            if ($user_role === 'super_admin') {
+                                            if (can('subjects.create')) {
                                                 echo " <a href='subjects.php?action=add' class='text-main-600'>Create the first subject</a>";
                                             }
                                             echo "</p>";
@@ -442,7 +447,7 @@ $flash = get_flash_message();
                                         } else {
                                             echo "<h5 class='text-gray-600 mb-8'>No Subjects Found</h5>";
                                             echo "<p class='text-gray-400'>You don't have any subjects assigned yet.";
-                                            if ($user_role === 'super_admin') {
+                                            if (can('subjects.create')) {
                                                 echo " <a href='subjects.php?action=add' class='text-main-600'>Create your first subject</a>";
                                             }
                                             echo "</p>";
@@ -458,7 +463,7 @@ $flash = get_flash_message();
                 </div>
 
             <?php elseif ($action == 'add' || $action == 'edit'): 
-                if ($user_role !== 'super_admin') {
+                if (!can($action == 'add' ? 'subjects.create' : 'subjects.edit')) {
                     flash_message('You do not have permission to manage subjects.', 'error');
                     redirect('subjects.php');
                 }

@@ -7,7 +7,7 @@ require_once 'classes/User.php';
 require_once 'classes/ClassModel.php';
 
 // Check if user is logged in
-require_roles(['super_admin', 'organization_admin', 'school_admin', 'teacher', 'solo_student']);
+require_permission('syllabi.view', 'dashboard.php');
 
 $current_user = current_user();
 $user_role = $_SESSION['role'] ?? '';
@@ -28,7 +28,7 @@ $syllabus_id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 $course_filter = isset($_GET['course']) ? (int)$_GET['course'] : 0;
 
 // Prevent non-super_admin from accessing add/edit views via GET
-if (($action === 'add' || $action === 'edit') && $user_role !== 'super_admin') {
+if (($action === 'add' && !can('syllabi.create')) || ($action === 'edit' && !can('syllabi.edit'))) {
     flash_message('You do not have permission to manage syllabi.', 'error');
     redirect('course-syllabi.php');
 }
@@ -52,7 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (isset($_POST['action'])) {
         switch ($_POST['action']) {
             case 'create':
-                if ($user_role !== 'super_admin') { flash_message('You do not have permission to create syllabi.', 'error'); redirect('course-syllabi.php'); }
+                if (!can('syllabi.create')) { permission_denied('course-syllabi.php'); }
                 $syllabus->syllabus_title = sanitize_input($_POST['syllabus_title']);
                 $syllabus->class_id = (int)$_POST['course_id'];
                 $syllabus->subject_id = null; // Courses don't use subjects
@@ -83,7 +83,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 break;
 
             case 'update':
-                if ($user_role !== 'super_admin') { flash_message('You do not have permission to update syllabi.', 'error'); redirect('course-syllabi.php'); }
+                if (!can('syllabi.edit')) { permission_denied('course-syllabi.php'); }
                 $syllabus->id = (int)$_POST['id'];
                 $syllabus->syllabus_title = sanitize_input($_POST['syllabus_title']);
                 $syllabus->class_id = (int)$_POST['course_id'];
@@ -115,7 +115,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 break;
 
             case 'delete':
-                if ($user_role !== 'super_admin') { flash_message('You do not have permission to delete syllabi.', 'error'); redirect('course-syllabi.php'); }
+                if (!can('syllabi.delete')) { permission_denied('course-syllabi.php'); }
                 $syllabus->id = (int)$_POST['id'];
                 if ($syllabus->delete()) {
                     flash_message('Course syllabus deleted successfully!', 'success');
@@ -294,8 +294,8 @@ $flash = get_flash_message();
                                 <?php endif; ?>
                             </div>
 
-                            <?php if ($user_role === 'super_admin'): ?>
-                                <?php if ($user_role === 'super_admin'): ?>
+                            <?php if (can('syllabi.create')): ?>
+                                <?php if (can('syllabi.create')): ?>
                                     <a href="course-syllabi.php?action=add<?php echo $course_filter ? '&course=' . $course_filter : ''; ?>" class="btn btn-main rounded-pill py-7 flex-align gap-4 fw-normal">
                                         <span class="d-flex text-md"><i class="ph ph-plus"></i></span>
                                         Add New Syllabus
@@ -352,7 +352,7 @@ $flash = get_flash_message();
 
                                             echo "<div class='flex-between gap-8 mt-16'>";
                                             echo "<div class='flex-align gap-8'>";
-                                            if ($user_role === 'super_admin') {
+                                            if (can('syllabi.edit')) {
                                                 echo "<a href='course-syllabi.php?action=edit&id=" . $row['id'] . "' class='btn btn-outline-main rounded-pill py-6 px-12 text-13'>Edit</a>";
                                                 echo "<button type='button' class='btn btn-outline-danger rounded-pill py-6 px-12 text-13' onclick='confirmDelete(" . $row['id'] . ", \"" . htmlspecialchars($row['syllabus_title']) . "\")'>Delete</button>";
                                             } else {
@@ -383,15 +383,15 @@ $flash = get_flash_message();
                                         if ($course_filter) {
                                             echo "<h5 class='text-gray-600 mb-8'>No Syllabi Found for This Course</h5>";
                                             echo "<p class='text-gray-400'>No syllabi have been created for this course yet.";
-                                            if ($user_role === 'super_admin') {
-                                            if ($user_role === 'super_admin') { echo " <a href='course-syllabi.php?action=add&course=" . $course_filter . "' class='text-main-600'>Create the first syllabus</a>"; }
+                                            if (can('syllabi.create')) {
+                                            if (can('syllabi.create')) { echo " <a href='course-syllabi.php?action=add&course=" . $course_filter . "' class='text-main-600'>Create the first syllabus</a>"; }
                                             }
                                             echo "</p>";
                                         } else {
                                             echo "<h5 class='text-gray-600 mb-8'>No Course Syllabi Found</h5>";
                                             echo "<p class='text-gray-400'>You don't have any course syllabi assigned yet.";
-                                            if ($user_role === 'super_admin') {
-                                                if ($user_role === 'super_admin') { echo " <a href='course-syllabi.php?action=add' class='text-main-600'>Create your first syllabus</a>"; }
+                                            if (can('syllabi.create')) {
+                                                if (can('syllabi.create')) { echo " <a href='course-syllabi.php?action=add' class='text-main-600'>Create your first syllabus</a>"; }
                                             }
                                             echo "</p>";
                                         }
@@ -406,7 +406,7 @@ $flash = get_flash_message();
                 </div>
 
             <?php elseif ($action == 'add' || $action == 'edit'):
-                if ($user_role !== 'super_admin') {
+                if (!can($action == 'add' ? 'syllabi.create' : 'syllabi.edit')) {
                     flash_message('You do not have permission to manage syllabi.', 'error');
                     redirect('course-syllabi.php');
                 }

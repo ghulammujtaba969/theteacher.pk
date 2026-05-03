@@ -6,12 +6,15 @@ $user_role = $_SESSION['role'] ?? '';
 
 require_once 'config/database.php';
 require_once 'classes/User.php';
+require_once 'classes/BatchEnrollment.php';
 $database = new Database();
 $db = $database->getConnection();
 $user = new User($db);
+$enrollmentModel = new BatchEnrollment($db);
 
 // Get accessible class IDs for the current user
 $accessible_classes_raw = [];
+$sidebar_learning_items = [];
 $can_access_all_classes_flag = false;
 $solo_student_has_batch = false;
 
@@ -27,6 +30,42 @@ if ($current_user) {
             $solo_student_has_batch = (int)($row['cnt'] ?? 0) > 0;
         } catch (Exception $e) {
             $solo_student_has_batch = false;
+        }
+    }
+
+    foreach ($accessible_classes_raw as $class_item) {
+        $class_id = (int)($class_item['id'] ?? 0);
+        if ($class_id <= 0) {
+            continue;
+        }
+
+        $sidebar_learning_items[$class_id] = [
+            'id' => $class_id,
+            'class_name' => $class_item['class_name'] ?? '',
+            'type' => $class_item['type'] ?? 'class',
+            'source' => 'access',
+        ];
+    }
+
+    if ($user_role === 'solo_student') {
+        try {
+            $enrollments = $enrollmentModel->getEnrollmentsByUser($current_user['id'] ?? ($_SESSION['user_id'] ?? 0));
+            foreach ($enrollments as $enrollment) {
+                $status = $enrollment['enrollment_status'] ?? '';
+                $class_id = (int)($enrollment['class_id'] ?? 0);
+                if ($class_id <= 0 || !in_array($status, ['pending', 'active', 'completed'], true)) {
+                    continue;
+                }
+
+                $sidebar_learning_items[$class_id] = [
+                    'id' => $class_id,
+                    'class_name' => $enrollment['class_name'] ?? '',
+                    'type' => $enrollment['class_type'] ?? 'class',
+                    'source' => 'enrollment',
+                ];
+            }
+        } catch (Exception $e) {
+            // Keep sidebar rendering even if enrollment data is unavailable.
         }
     }
 }
@@ -67,7 +106,8 @@ if (in_array($user_role, ['super_admin', 'organization_admin', 'school_admin']))
                     </a>
                 </li>
 
-                <?php if ($user_role === 'super_admin'): ?>
+                <?php if (can_any(['classes.view', 'courses.view', 'subjects.view', 'syllabi.view'])): ?>
+                    <?php if (can_any(['classes.view', 'subjects.view', 'syllabi.view'])): ?>
                     <!-- Classes Menu -->
                     <li class="sidebar-menu__item has-dropdown <?php echo ($current_page == 'classes' || $current_page == 'subjects' || $current_page == 'syllabi') ? 'activePage' : ''; ?>">
                         <a href="javascript:void(0)" class="sidebar-menu__link">
@@ -76,24 +116,32 @@ if (in_array($user_role, ['super_admin', 'organization_admin', 'school_admin']))
                         </a>
                         <!-- Submenu start -->
                         <ul class="sidebar-submenu">
+                            <?php if (can('classes.view')): ?>
                             <li class="sidebar-submenu__item">
                                 <a href="classes.php" class="sidebar-submenu__link <?php echo ($current_page == 'classes' && !isset($_GET['action'])) ? 'activePage' : ''; ?>"> All Classes </a>
                             </li>
-                            <?php if (in_array($user_role, ['super_admin'])): ?>
+                            <?php endif; ?>
+                            <?php if (can('classes.create')): ?>
                                 <li class="sidebar-submenu__item">
                                     <a href="classes.php?action=add" class="sidebar-submenu__link <?php echo ($current_page == 'classes' && isset($_GET['action']) && $_GET['action'] == 'add') ? 'activePage' : ''; ?>"> Add Class </a>
                                 </li>
                             <?php endif; ?>
+                            <?php if (can('subjects.view')): ?>
                             <li class="sidebar-submenu__item">
                                 <a href="subjects.php" class="sidebar-submenu__link <?php echo ($current_page == 'subjects') ? 'activePage' : ''; ?>"> Subjects </a>
                             </li>
+                            <?php endif; ?>
+                            <?php if (can('syllabi.view')): ?>
                             <li class="sidebar-submenu__item">
                                 <a href="syllabi.php" class="sidebar-submenu__link <?php echo ($current_page == 'syllabi') ? 'activePage' : ''; ?>"> Syllabi </a>
                             </li>
+                            <?php endif; ?>
                         </ul>
                         <!-- Submenu End -->
                     </li>
+                    <?php endif; ?>
 
+                    <?php if (can_any(['courses.view', 'syllabi.view'])): ?>
                     <!-- Courses Menu -->
                     <li class="sidebar-menu__item has-dropdown <?php echo ($current_page == 'courses' || $current_page == 'course-syllabi') ? 'activePage' : ''; ?>">
                         <a href="javascript:void(0)" class="sidebar-menu__link">
@@ -102,17 +150,21 @@ if (in_array($user_role, ['super_admin', 'organization_admin', 'school_admin']))
                         </a>
                         <!-- Submenu start -->
                         <ul class="sidebar-submenu">
+                            <?php if (can('courses.view')): ?>
                             <li class="sidebar-submenu__item">
                                 <a href="courses.php" class="sidebar-submenu__link <?php echo ($current_page == 'courses' && !isset($_GET['action'])) ? 'activePage' : ''; ?>"> All Courses </a>
                             </li>
-                            <?php if (in_array($user_role, ['super_admin'])): ?>
+                            <?php endif; ?>
+                            <?php if (can('courses.create')): ?>
                                 <li class="sidebar-submenu__item">
                                     <a href="courses.php?action=add" class="sidebar-submenu__link <?php echo ($current_page == 'courses' && isset($_GET['action']) && $_GET['action'] == 'add') ? 'activePage' : ''; ?>"> Add Course </a>
                                 </li>
                             <?php endif; ?>
+                            <?php if (can('syllabi.view')): ?>
                             <li class="sidebar-submenu__item">
                                 <a href="course-syllabi.php" class="sidebar-submenu__link <?php echo ($current_page == 'course-syllabi') ? 'activePage' : ''; ?>"> Course Syllabi </a>
                             </li>
+                            <?php endif; ?>
                         </ul>
                         <!-- Submenu End -->
                     </li>
@@ -120,7 +172,7 @@ if (in_array($user_role, ['super_admin', 'organization_admin', 'school_admin']))
 
                 <?php endif; ?>
                 <!-- Batch Management with Dropdown -->
-                <?php if (in_array($user_role, ['super_admin'])): ?>
+                <?php if (can('batches.view')): ?>
                     <li class="sidebar-menu__item has-dropdown <?php echo ($current_page == 'batches') ? 'activePage' : ''; ?>">
                         <a href="javascript:void(0)" class="sidebar-menu__link">
                             <span class="icon"><i class="ph ph-users-three"></i></span>
@@ -130,7 +182,7 @@ if (in_array($user_role, ['super_admin', 'organization_admin', 'school_admin']))
                             <li class="sidebar-submenu__item">
                                 <a href="batches.php" class="sidebar-submenu__link">All Batches</a>
                             </li>
-                            <?php if (in_array($user_role, ['super_admin'])): ?>
+                            <?php if (can('batches.create')): ?>
                                 <li class="sidebar-submenu__item">
                                     <a href="batches.php?action=add" class="sidebar-submenu__link">Create Batch</a>
                                 </li>
@@ -140,24 +192,26 @@ if (in_array($user_role, ['super_admin', 'organization_admin', 'school_admin']))
                 <?php endif; ?>
 
                 <?php
-                // Display individually assigned classes for users who don't have access to all classes
-                if (!$can_access_all_classes_flag && !empty($accessible_classes_raw) && $user_role !== 'super_admin'):
+                // Display assigned/enrolled classes and courses for users who don't have access to everything
+                if (!$can_access_all_classes_flag && !empty($sidebar_learning_items) && $user_role !== 'super_admin'):
                 ?>
                     <li class="sidebar-menu__item has-dropdown">
                         <a href="javascript:void(0)" class="sidebar-menu__link">
                             <span class="icon"><i class="ph ph-chalkboard-teacher"></i></span>
-                            <span class="text">My Assigned Classes</span>
+                            <span class="text">My Courses / Classes</span>
                         </a>
                         <!-- Submenu start -->
                         <ul class="sidebar-submenu">
-                            <?php foreach ($accessible_classes_raw as $assigned_class): ?>
+                            <?php foreach ($sidebar_learning_items as $assigned_class): ?>
                                 <li class="sidebar-submenu__item">
                                     <?php 
                                         $isCourse = (isset($assigned_class['type']) && $assigned_class['type'] === 'course');
-                                        $targetPage = $isCourse ? 'courses.php' : 'classes.php';
-                                        $isActive = (in_array($current_page, ['classes','courses']) && isset($_GET['id']) && $_GET['id'] == $assigned_class['id']);
+                                        $typeLabel = $isCourse ? 'Course' : 'Class';
+                                        $targetPage = $user_role === 'solo_student' ? 'course-detail.php' : ($isCourse ? 'courses.php' : 'classes.php');
+                                        $isActive = (in_array($current_page, ['classes','courses','course-detail'], true) && isset($_GET['id']) && $_GET['id'] == $assigned_class['id']);
                                     ?>
                                     <a href="<?php echo $targetPage; ?>?id=<?php echo $assigned_class['id']; ?>" class="sidebar-submenu__link <?php echo $isActive ? 'activePage' : ''; ?>">
+                                        <span class="text-11 text-main-600 fw-semibold me-4"><?php echo $typeLabel; ?>:</span>
                                         <?php echo htmlspecialchars($assigned_class['class_name']); ?>
                                     </a>
                                 </li>
@@ -167,7 +221,7 @@ if (in_array($user_role, ['super_admin', 'organization_admin', 'school_admin']))
                     </li>
                 <?php endif; ?>
 
-                <?php if (in_array($user_role, ['solo_student', 'student'])): ?>
+                <?php if (can_any(['lectures.view', 'enrollments.self_enroll'])): ?>
                     <li class="sidebar-menu__item <?php echo ($current_page == 'my-learning') ? 'activePage' : ''; ?>">
                         <a href="my-learning.php" class="sidebar-menu__link">
                             <span class="icon"><i class="ph ph-graduation-cap"></i></span>
@@ -176,7 +230,7 @@ if (in_array($user_role, ['super_admin', 'organization_admin', 'school_admin']))
                     </li>
                 <?php endif; ?>
 
-                <?php if (in_array($user_role, ['super_admin', 'organization_admin', 'school_admin', 'teacher']) || ($user_role === 'solo_student' && $solo_student_has_batch)): ?>
+                <?php if (can('lectures.view') || ($user_role === 'solo_student' && $solo_student_has_batch)): ?>
 
                     <li class="sidebar-menu__item <?php echo ($current_page == 'lectures') ? 'activePage' : ''; ?>">
                         <a href="lectures.php" class="sidebar-menu__link">
@@ -188,7 +242,7 @@ if (in_array($user_role, ['super_admin', 'organization_admin', 'school_admin']))
 
                 
 
-                <?php if (in_array($user_role, ['super_admin', 'organization_admin', 'school_admin'])): ?>
+                <?php if (can('users.view')): ?>
                     <li class="sidebar-menu__item <?php echo ($current_page == 'users') ? 'activePage' : ''; ?>">
                         <a href="users.php" class="sidebar-menu__link">
                             <span class="icon"><i class="ph ph-users-three"></i></span>
@@ -199,7 +253,17 @@ if (in_array($user_role, ['super_admin', 'organization_admin', 'school_admin']))
                     
                 <?php endif; ?>
 
-                <?php if ($user_role === 'super_admin'): ?>
+                <?php if (can('roles.view')): ?>
+                    <li class="sidebar-menu__item <?php echo ($current_page == 'roles-permissions') ? 'activePage' : ''; ?>">
+                        <a href="roles-permissions.php" class="sidebar-menu__link">
+                            <span class="icon"><i class="ph ph-shield-check"></i></span>
+                            <span class="text">Roles & Permissions</span>
+                        </a>
+                    </li>
+                    <?php endif; ?>
+                <?php endif; ?>
+
+                <?php if (can('solo_students.view')): ?>
                    <li class="sidebar-menu__item <?php echo ($current_page == 'solo-students') ? 'activePage' : ''; ?>">
                         <a href="solo-students.php" class="sidebar-menu__link">
                             <span class="icon"><i class="ph ph-student"></i></span>
@@ -207,7 +271,7 @@ if (in_array($user_role, ['super_admin', 'organization_admin', 'school_admin']))
                         </a>
                     </li>
                 <?php endif; ?>
-                <?php if ($user_role === 'super_admin'): ?>
+                <?php if (can('inquiries.view')): ?>
                     <!-- NEW: Class Inquiries Menu Item -->
                     <li class="sidebar-menu__item <?php echo ($current_page == 'class-inquiries') ? 'activePage' : ''; ?>">
                         <a href="class-inquiries.php" class="sidebar-menu__link">
@@ -225,7 +289,7 @@ if (in_array($user_role, ['super_admin', 'organization_admin', 'school_admin']))
                     </li>
                 <?php endif; ?>
 
-                <?php if ($user_role === 'super_admin'): ?>
+                <?php if (can('organizations.view')): ?>
                     <li class="sidebar-menu__item <?php echo ($current_page == 'organizations') ? 'activePage' : ''; ?>">
                         <a href="organizations.php" class="sidebar-menu__link">
                             <span class="icon"><i class="ph ph-buildings"></i></span>
@@ -234,36 +298,44 @@ if (in_array($user_role, ['super_admin', 'organization_admin', 'school_admin']))
                     </li>
                 <?php endif; ?>
 
-                <?php if (in_array($user_role, ['super_admin', 'organization_admin'])): ?>
+                <?php if (can('schools.view') || can('class_access.view')): ?>
+                    <?php if (can('schools.view')): ?>
                     <li class="sidebar-menu__item <?php echo ($current_page == 'schools') ? 'activePage' : ''; ?>">
                         <a href="schools.php" class="sidebar-menu__link">
                             <span class="icon"><i class="ph ph-graduation-cap"></i></span>
                             <span class="text">Schools</span>
                         </a>
                     </li>
+                    <?php endif; ?>
+                    <?php if (can('class_access.view')): ?>
                     <li class="sidebar-menu__item <?php echo ($current_page == 'class-access') ? 'activePage' : ''; ?>">
                         <a href="class-access.php" class="sidebar-menu__link">
                             <span class="icon"><i class="ph ph-key"></i></span>
                             <span class="text">Class Access</span>
                         </a>
                     </li>
+                    <?php endif; ?>
                 <?php endif; ?>
 
-                <?php if ($user_role === 'super_admin'): ?>
+                <?php if (can('pptx.manage') || can('pending_registrations.view')): ?>
+                    <?php if (can('pptx.manage')): ?>
                     <li class="sidebar-menu__item <?php echo ($current_page == 'pptx_page_manager') ? 'activePage' : ''; ?>">
                         <a href="pptx_page_manager.php" class="sidebar-menu__link">
                             <span class="icon"><i class="ph ph-presentation-chart"></i></span>
                             <span class="text">PPTX Page Manager</span>
                         </a>
                     </li>
+                    <?php endif; ?>
+                    <?php if (can('pending_registrations.view')): ?>
                     <li class="sidebar-menu__item <?php echo ($current_page == 'pending_registrations') ? 'activePage' : ''; ?>">
                         <a href="pending_registrations.php" class="sidebar-menu__link">
                             <span class="icon"><i class="ph ph-user-plus"></i></span>
                             <span class="text">Pending Registrations</span>
                         </a>
                     </li>
+                    <?php endif; ?>
                 <?php endif; ?>
-                <?php if (in_array($user_role, ['super_admin', 'organization_admin', 'school_admin', 'teacher']) || ($user_role === 'solo_student' && $solo_student_has_batch)): ?>
+                <?php if (can('zoom.view') || ($user_role === 'solo_student' && $solo_student_has_batch)): ?>
                     <li class="sidebar-menu__item <?php echo ($current_page == 'zoom-meetings') ? 'activePage' : ''; ?>">
                         <a href="zoom-meetings.php" class="sidebar-menu__link">
                             <span class="icon"><i class="ph ph-video-camera"></i></span>
@@ -283,7 +355,7 @@ if (in_array($user_role, ['super_admin', 'organization_admin', 'school_admin']))
                 </li>
 
 
-                <?php if ($user_role === 'super_admin'): ?>
+                <?php if (can('profile.edit')): ?>
                     <li class="sidebar-menu__item">
                         <a href="profile.php" class="sidebar-menu__link">
                             <span class="icon"><i class="ph ph-gear"></i></span>

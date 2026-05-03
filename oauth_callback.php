@@ -223,6 +223,7 @@ if (!empty($existing['role'])) {
     $roleSlug = strtolower(str_replace(' ', '_', $existing['role_name']));
 }
 $_SESSION['role'] = $roleSlug;
+unset($_SESSION['_permissions']);
 
 $_SESSION['user'] = $existing;
 

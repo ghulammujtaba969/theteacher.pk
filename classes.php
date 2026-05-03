@@ -5,8 +5,7 @@ require_once 'classes/ClassModel.php';
 require_once 'includes/functions.php';
 require_once 'classes/User.php';
 
-// Check if user is logged in
-require_roles(['super_admin', 'organization_admin', 'school_admin', 'teacher', 'solo_student']);
+require_permission('classes.view', 'dashboard.php');
 
 $current_user = current_user();
 $user_role = $_SESSION['role'] ?? '';
@@ -24,11 +23,15 @@ $can_access_all_classes_flag = ($current_user['can_access_all_classes'] ?? 0) ==
 $action = isset($_GET['action']) ? $_GET['action'] : 'list';
 $class_id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 
+if ($action === 'add' && !can('classes.create')) permission_denied('classes.php');
+if ($action === 'edit' && !can('classes.edit')) permission_denied('classes.php');
+
 // Handle form submissions
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (isset($_POST['action'])) {
         switch ($_POST['action']) {
             case 'create':
+                if (!can('classes.create')) permission_denied('classes.php');
                 $class->class_name = sanitize_input($_POST['class_name']);
                 $class->class_code = sanitize_input($_POST['class_code']);
                 $class->type = 'class';
@@ -70,6 +73,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 break;
 
             case 'update':
+                if (!can('classes.edit')) permission_denied('classes.php');
                 $class->id = (int)$_POST['id'];
                 
                 // Get existing data first
@@ -128,6 +132,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 break;
 
             case 'delete':
+                if (!can('classes.delete')) permission_denied('classes.php');
                 $class->id = (int)$_POST['id'];
                 if ($class->delete()) {
                     flash_message('Class deleted successfully!', 'success');
@@ -138,6 +143,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 break;
 
             case 'toggle_registration':
+                if (!can('classes.toggle_registration')) permission_denied('classes.php');
                 $class_id = (int)$_POST['id'];
                 if ($class->toggleRegistration($class_id)) {
                     flash_message('Registration status updated successfully!', 'success');
@@ -272,7 +278,7 @@ $flash = get_flash_message();
                                                                                                                                                                                                                                 ?>)</button>
                                 </li>
                             </ul>
-                            <?php if ($user_role === 'super_admin'): ?>
+                            <?php if (can('classes.create')): ?>
                                 <a href="classes.php?action=add" class="btn btn-main rounded-pill py-7 flex-align gap-4 fw-normal">
                                     <span class="d-flex text-md"><i class="ph ph-plus"></i></span>
                                     Create New Class
@@ -327,9 +333,13 @@ $flash = get_flash_message();
 
                                             echo "<div class='flex-between gap-8 mt-16'>";
                                             echo "<div class='flex-align gap-8'>";
-                                            if ($user_role === 'super_admin') {
+                                            if (can('classes.edit') || can('classes.delete')) {
+                                                if (can('classes.edit')) {
                                                 echo "<a href='classes.php?action=edit&id=" . $row['id'] . "' class='btn btn-outline-main rounded-pill py-6 px-12 text-13'>Edit</a>";
+                                                }
+                                                if (can('classes.delete')) {
                                                 echo "<button type='button' class='btn btn-danger rounded-pill py-6 px-12 text-13' onclick='confirmDelete(" . $row['id'] . ", \"" . htmlspecialchars($row['class_name']) . "\")'>Delete</button>";
+                                                }
                                             } elseif (in_array($user_role, ['organization_admin', 'school_admin', 'teacher'], true)) {
                                                 echo "<a href='lectures.php?class=" . $row['id'] . "' class='btn btn-outline-main rounded-pill py-6 px-12 text-13'>View Lectures</a>";
                                             } else {
@@ -338,7 +348,7 @@ $flash = get_flash_message();
                                             echo "</div>";
                                             echo "<span class='badge " . ($row['status'] === 'active' ? 'bg-success' : 'bg-danger') . "'>" . ucfirst($row['status']) . "</span>";
                                             echo "</div>";
-                                            if ($user_role === 'super_admin') {
+                                            if (can('classes.toggle_registration')) {
                                                 echo "<button type='button' class='btn btn-sm " . ($row['registration_open'] ? 'btn-warning' : 'btn-success') . " rounded-pill py-6 px-12 text-13' onclick='toggleRegistration(" . $row['id'] . ")'>";
                                                 echo "<i class='ph ph-lock" . ($row['registration_open'] ? '-open' : '') . "'></i>";
                                                 echo "</button>";
@@ -356,7 +366,7 @@ $flash = get_flash_message();
                                         echo "</div>";
                                         echo "<h5 class='text-gray-600 mb-8'>No Classes Found</h5>";
                                         echo "<p class='text-gray-400'>You don't have any classes assigned yet.";
-                                        if (in_array($user_role, ['super_admin', 'organization_admin', 'school_admin'])) {
+                                        if (can('classes.create')) {
                                             echo " <a href='classes.php?action=add' class='text-main-600'>Create your first class</a>";
                                         }
                                         echo "</p>";
@@ -371,7 +381,7 @@ $flash = get_flash_message();
                 </div>
 
             <?php elseif ($action == 'add' || $action == 'edit'):
-                if (!in_array($user_role, ['super_admin', 'organization_admin', 'school_admin'])) {
+                if (!can($action == 'add' ? 'classes.create' : 'classes.edit')) {
                     flash_message('You do not have permission to manage classes.', 'error');
                     redirect('classes.php');
                 }

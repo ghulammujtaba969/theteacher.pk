@@ -473,7 +473,7 @@ $flash = get_flash_message();
                                             <i class="ph ph-squares-four me-2"></i>Dashboard
                                         </a>
                                         
-                                        <?php if (in_array($_SESSION['role'], ['super_admin', 'organization_admin', 'school_admin'])): ?>
+                                        <?php if (can('users.view')): ?>
                                         <a href="users.php" class="btn btn-outline-info btn-sm">
                                             <i class="ph ph-users-three me-2"></i>Manage Users
                                         </a>

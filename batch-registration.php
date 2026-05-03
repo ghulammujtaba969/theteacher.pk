@@ -7,7 +7,7 @@ require_once 'classes/BatchRegistrationLink.php';
 require_once 'includes/functions.php';
 
 // Check if user is logged in
-require_roles(['student', 'solo_student', 'teacher', 'organization_admin', 'school_admin', 'super_admin']);
+require_any_permission(['enrollments.self_enroll', 'enrollments.manage'], 'dashboard.php');
 
 $current_user = current_user();
 

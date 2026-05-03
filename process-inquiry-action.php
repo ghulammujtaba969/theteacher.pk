@@ -15,9 +15,8 @@ if (!is_logged_in()) {
 }
 
 $current_user = current_user();
-$allowed_roles = ['Super Admin', 'Organization Admin', 'School Admin'];
 
-if (!in_array($current_user['role_name'], $allowed_roles)) {
+if (!can('inquiries.view')) {
     if (isset($_POST['ajax'])) {
         echo json_encode(['success' => false, 'message' => 'Insufficient permissions']);
         exit;
@@ -36,6 +35,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
         switch ($action) {
             case 'approve':
+                if (!can('inquiries.approve')) {
+                    $success = false;
+                    $message = 'You do not have permission to perform this action.';
+                    break;
+                }
                 $inquiry_id = (int)$_POST['inquiry_id'];
                 if ($classInquiry->approve($inquiry_id, $current_user['id'], $admin_notes)) {
                     $success = true;
@@ -47,6 +51,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 break;
 
             case 'reject':
+                if (!can('inquiries.reject')) {
+                    $success = false;
+                    $message = 'You do not have permission to perform this action.';
+                    break;
+                }
                 $inquiry_id = (int)$_POST['inquiry_id'];
                 if ($classInquiry->reject($inquiry_id, $current_user['id'], $admin_notes)) {
                     $success = true;
@@ -58,6 +67,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 break;
 
             case 'bulk_approve':
+                if (!can('inquiries.approve')) {
+                    $success = false;
+                    $message = 'You do not have permission to perform this action.';
+                    break;
+                }
                 $inquiry_ids_string = $_POST['inquiry_ids'] ?? '';
                 $inquiry_ids = array_filter(array_map('intval', explode(',', $inquiry_ids_string)));
 
